@@ -7,6 +7,17 @@
 
 ## 2026-07-12 — FE-001 문서 작업
 
+## 2026-07-19 — FE-011 Netlify Next.js 배포 대상 설정
+
+| 검증 | 데이터 | 상태 | 결과 |
+| --- | --- | --- | --- |
+| `netlify.toml` 설정 검토 | Netlify 공식 문서 | 통과 | 최신 Next.js 자동 어댑터를 고정하지 않고 `npm run build`, `.next`를 명시 |
+| `npm.cmd run lint` | 정적 | 통과 | ESLint 오류·경고 0 |
+| `npm.cmd run typecheck` | 정적 | 통과 | `next typegen && tsc --noEmit` 통과 |
+| `npm.cmd run test:run` | MSW/fixture | 통과 | 6 files, 33 tests 통과 |
+| `npm.cmd run build` | production build | 통과 | Next.js 16.2.10 컴파일·TypeScript·페이지 데이터 수집 통과 |
+| Netlify 재배포 및 운영 URL | 운영 환경 | 미실행 | 저장소 변경을 아직 원격 기본 브랜치에 반영·재배포하지 않았음 |
+
 | 검증 | 데이터 | 상태 | 결과 |
 | --- | --- | --- | --- |
 | 허용 경로 변경 확인 | 해당 없음 | 통과 | 이번 작업의 patch 대상이 `AGENTS.md`, `docs/**`뿐임을 확인 |

@@ -7,6 +7,13 @@
 
 ## 2026-07-12
 
+### FE-011 — Netlify Next.js 배포 대상 설정
+
+- 상태: 검증 중
+- API 단계: 해당 없음
+- 변경: `netlify.toml`에 Next.js build 명령과 `.next` publish 디렉터리를 명시했다.
+- 비범위: Netlify legacy plugin 추가·adapter 버전 고정, API 계약 및 화면 변경.
+
 ### FE-009 — 출석 Enum 단일화
 
 - 상태: 완료

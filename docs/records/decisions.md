@@ -20,6 +20,7 @@
 | ADR-009 | 승인 | 관리자 일정 이미지는 2단계 업로드 후 JSON `imageFileId` 참조 | 이미지 검증·변환·저장을 일정 저장과 분리해 재시도와 이미지 재사용을 안전하게 처리한다. 업로드 응답의 `volunteerFileId`를 생성·수정 DTO에 사용한다. |
 | ADR-010 | 승인 | Admin 서버 DTO를 feature API 경계에서 명시적으로 정규화 | UUID·중첩 페이지·presigned URL·문자열 목록을 화면 View Model과 분리해 서버 DTO 변경이 UI에 직접 전파되지 않게 한다. |
 | ADR-011 | 승인 | 출석 상태는 DSHelper(BE) `VolunteerParticipationStatus`만 사용 | `APPLIED`를 UI의 미처리로 파생하고 `CANCELED`는 출석 대상에서 제외한다. 별도 attendance Enum·필드를 두지 않는다. |
+| ADR-012 | 승인 | Netlify 최신 OpenNext 자동 어댑터를 사용하고 build/publish만 저장소에 명시 | Next.js 16.2의 adapter를 `@netlify/plugin-nextjs`로 고정하지 않는다. `netlify.toml`에서 `npm run build`, `.next`를 명시해 UI 설정 누락으로 인한 루트 404를 방지한다. |
 
 ## 결정 추가 형식
 
