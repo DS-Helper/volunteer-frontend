@@ -2,5 +2,9 @@
   command = "npm run build"
   publish = ".next"
 
+[build.environment]
+  NEXT_PUBLIC_API_BASE_URL = "https://server.dshelper.kr"
+  NEXT_PUBLIC_USE_VOLUNTEER_MOCKS = "false"
+
 [[plugins]]
   package = "@netlify/plugin-nextjs"

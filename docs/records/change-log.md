@@ -15,6 +15,15 @@
 - 변경: 자동 어댑터가 실행되지 않는 운영 배포를 보완하기 위해 최신 `@netlify/plugin-nextjs` Runtime을 devDependency와 Build plugin으로 등록했다.
 - 비범위: legacy Runtime v4, API 계약 및 화면 변경.
 
+### FE-012 — 실 API 기본 전환
+
+- 상태: 검증 중
+- API 단계: 실 API 기본, Mock 명시적 opt-in
+- 변경: `NEXT_PUBLIC_USE_VOLUNTEER_MOCKS=true`일 때만 Mock handler를 주입하도록 API request 경계를 변경했다.
+- 변경: Netlify production에 `https://server.dshelper.kr`와 Mock 비활성 설정을 명시했다.
+- 변경: 루트 layout을 request-time dynamic으로 지정해 API 데이터를 build 결과에 고정하지 않도록 했다.
+- 비범위: backend CORS·인증 서버 설정 변경.
+
 ### FE-009 — 출석 Enum 단일화
 
 - 상태: 완료

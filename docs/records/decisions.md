@@ -21,6 +21,7 @@
 | ADR-010 | 승인 | Admin 서버 DTO를 feature API 경계에서 명시적으로 정규화 | UUID·중첩 페이지·presigned URL·문자열 목록을 화면 View Model과 분리해 서버 DTO 변경이 UI에 직접 전파되지 않게 한다. |
 | ADR-011 | 승인 | 출석 상태는 DSHelper(BE) `VolunteerParticipationStatus`만 사용 | `APPLIED`를 UI의 미처리로 파생하고 `CANCELED`는 출석 대상에서 제외한다. 별도 attendance Enum·필드를 두지 않는다. |
 | ADR-012 | 승인 | Netlify 최신 Next.js Runtime을 명시적 Build plugin으로 등록 | 자동 어댑터 감지가 실행되지 않아 `@netlify/plugin-nextjs` 최신 버전을 devDependency와 `netlify.toml`에 등록한다. `npm run build`, `.next`도 함께 명시해 UI 설정 누락과 정적 파일 전용 배포를 방지한다. |
+| ADR-013 | 승인 | 실 API를 기본으로 사용하고 Mock은 명시적 flag에서만 활성화 | production에서 환경변수 누락으로 Mock 화면이 노출되는 것을 방지한다. `NEXT_PUBLIC_USE_VOLUNTEER_MOCKS=true`일 때만 Mock handler를 주입하고, 그 외에는 공통 API client가 실제 backend를 호출한다. |
 
 ## 결정 추가 형식
 

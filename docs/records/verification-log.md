@@ -30,6 +30,17 @@
 | 운영 URL `/volunteer` | production | 통과 | HTTP 200 |
 | 운영 URL `/volunteer/events` | production | 통과 | HTTP 200 |
 
+## 2026-07-19 — FE-012 실 API 기본 전환
+
+| 검증 | 데이터 | 상태 | 결과 |
+| --- | --- | --- | --- |
+| `npm.cmd run lint` | 정적 | 통과 | ESLint 오류·경고 0 |
+| `npm.cmd run typecheck` | 정적 | 통과 | `next typegen && tsc --noEmit` 통과 |
+| `npm.cmd run test:run` | MSW/fixture | 통과 | 6 files, 33 tests 통과 |
+| `npm.cmd run build` | dynamic production build | 통과 | API request-time dynamic layout으로 build 통과 |
+| Mock activation rule | 정적 | 통과 | `NEXT_PUBLIC_USE_VOLUNTEER_MOCKS=true`일 때만 Mock handler 주입 |
+| Backend live smoke | 실 API | 미실행 | 운영 backend 인증·CORS 계약과 유효 사용자 세션이 필요 |
+
 | 검증 | 데이터 | 상태 | 결과 |
 | --- | --- | --- | --- |
 | 허용 경로 변경 확인 | 해당 없음 | 통과 | 이번 작업의 patch 대상이 `AGENTS.md`, `docs/**`뿐임을 확인 |

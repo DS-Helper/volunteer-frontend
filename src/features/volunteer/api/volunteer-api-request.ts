@@ -17,11 +17,18 @@ export function volunteerApiRequest<TResult, TBody = unknown>(
   path: string,
   options: ApiRequestOptions<TBody, TResult> = {},
 ): Promise<TResult> {
-  return apiClient.request<TResult, TBody>(path, {
-    ...options,
-    mock: (request: MockApiRequest<TBody>) =>
-      handleMockRequest<TResult, TBody>(request),
-  })
+  const useMocks = process.env.NEXT_PUBLIC_USE_VOLUNTEER_MOCKS === 'true'
+
+  return apiClient.request<TResult, TBody>(
+    path,
+    useMocks
+      ? {
+          ...options,
+          mock: (request: MockApiRequest<TBody>) =>
+            handleMockRequest<TResult, TBody>(request),
+        }
+      : options,
+  )
 }
 
 export function createJsonMultipart(
