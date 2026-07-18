@@ -25,7 +25,10 @@
 | `npm.cmd run lint` | 정적 | 통과 | ESLint 오류·경고 0 |
 | `npm.cmd run typecheck` | 정적 | 통과 | `next typegen && tsc --noEmit` 통과 |
 | `npm.cmd run build` | production build | 통과 | Next.js 16.2.10에서 static·dynamic route 생성 통과 |
-| Netlify production deploy | 운영 환경 | 미실행 | 커밋·push 후 확인 예정 |
+| Netlify production deploy | 운영 환경 | 통과 | deploy `6a5baf6d9af4a50008dff472`, commit `ffea3cc`; Next.js Runtime 성공 및 Function 1개 배포 |
+| 운영 URL `/` | production | 통과 | HTTP 200 |
+| 운영 URL `/volunteer` | production | 통과 | HTTP 200 |
+| 운영 URL `/volunteer/events` | production | 통과 | HTTP 200 |
 
 | 검증 | 데이터 | 상태 | 결과 |
 | --- | --- | --- | --- |
