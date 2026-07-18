@@ -52,7 +52,7 @@ npm run test:e2e
   publish = ".next"
 ```
 
-Next.js 16.2는 Netlify의 최신 OpenNext 어댑터가 자동으로 처리한다. `@netlify/plugin-nextjs`를 의존성이나 `netlify.toml`에 고정하지 않는다. 이는 최신 Netlify 공식 문서가 adapter 버전 고정을 권장하지 않기 때문이다.
+Next.js 16.2는 Netlify의 최신 Next.js Runtime(OpenNext 기반)이 처리한다. 이 사이트에서는 자동 감지가 실행되지 않아 공식 수동 설치 방식으로 `@netlify/plugin-nextjs`를 devDependency와 `netlify.toml` plugin으로 등록했다. 최신 버전을 사용하므로 Netlify Runtime의 App Router·SSR 처리를 활성화할 수 있다.
 
 배포 후 Netlify의 build log에서 build command와 publish directory가 위 값으로 표시되는지 확인하고, 사이트 루트(`/`)와 App Router 경로를 각각 요청한다.
 

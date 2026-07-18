@@ -12,7 +12,8 @@
 - 상태: 검증 중
 - API 단계: 해당 없음
 - 변경: `netlify.toml`에 Next.js build 명령과 `.next` publish 디렉터리를 명시했다.
-- 비범위: Netlify legacy plugin 추가·adapter 버전 고정, API 계약 및 화면 변경.
+- 변경: 자동 어댑터가 실행되지 않는 운영 배포를 보완하기 위해 최신 `@netlify/plugin-nextjs` Runtime을 devDependency와 Build plugin으로 등록했다.
+- 비범위: legacy Runtime v4, API 계약 및 화면 변경.
 
 ### FE-009 — 출석 Enum 단일화
 
