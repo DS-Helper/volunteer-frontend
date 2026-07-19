@@ -47,11 +47,13 @@ function flattenAdminMemberDetail(detail: AdminBackendMemberDetail): AdminVolunt
 
 export function getAdminVolunteerApplications(
   query: AdminVolunteerApplicationQuery = {},
+  signal?: AbortSignal,
 ): Promise<AdminVolunteerApplicationPage> {
   return volunteerApiRequest<AdminBackendPage<AdminVolunteerApplication>>(ADMIN_APPLICATIONS_PATH, {
     cache: 'no-store',
     method: 'GET',
     query,
+    signal,
   }).then(flattenAdminPage)
 }
 
@@ -94,11 +96,13 @@ export function getAdminVolunteerApplicationPhoto(
 
 export function getAdminVolunteerMembers(
   query: AdminVolunteerMemberQuery = {},
+  signal?: AbortSignal,
 ): Promise<AdminVolunteerMemberPage> {
   return volunteerApiRequest<AdminBackendPage<AdminVolunteerMemberPage['content'][number]>>(ADMIN_MEMBERS_PATH, {
     cache: 'no-store',
     method: 'GET',
     query,
+    signal,
   }).then(flattenAdminPage)
 }
 
@@ -160,11 +164,13 @@ export function uploadAdminVolunteerEventImage(
 
 export function getAdminVolunteerEvents(
   query: AdminVolunteerEventQuery = {},
+  signal?: AbortSignal,
 ): Promise<AdminVolunteerEventPage> {
   return volunteerApiRequest<AdminBackendPage<AdminVolunteerEvent>>(ADMIN_EVENTS_PATH, {
     cache: 'no-store',
     method: 'GET',
     query,
+    signal,
   }).then(flattenAdminPage)
 }
 

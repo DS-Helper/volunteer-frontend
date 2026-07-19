@@ -27,7 +27,11 @@ export default function AdminVolunteerMembersPage() {
   const gender = genderValue && genderValue in VOLUNTEER_GENDER_LABEL
     ? (genderValue as VolunteerGender)
     : undefined;
-  useEffect(() => { void getAdminVolunteerMembers({ keyword, status, gender, page: 0, size: 20 }).then(setResult); }, [keyword, status, gender]);
+  useEffect(() => {
+    const controller = new AbortController();
+    void getAdminVolunteerMembers({ keyword, status, gender, page: 0, size: 20 }, controller.signal).then(setResult).catch(() => undefined);
+    return () => controller.abort();
+  }, [keyword, status, gender]);
   if (!result) return <main className="mx-auto max-w-[1240px] px-5 py-20 text-center" role="status">단원 목록을 불러오는 중입니다…</main>;
 
   return (
