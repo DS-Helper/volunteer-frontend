@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { ApiError } from '@/lib/errors'
 import { getOAuthLoginUrl, type OAuthProvider } from '@/features/auth'
 
@@ -13,12 +13,19 @@ const providers: Array<{ id: OAuthProvider; label: string }> = [
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [pending, setPending] = useState<OAuthProvider | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  function rememberReturnTo() {
+    const returnTo = searchParams.get('returnTo')
+    if (returnTo && returnTo.startsWith('/')) window.sessionStorage.setItem('oauth-return-to', returnTo)
+  }
 
   async function startLogin(provider: OAuthProvider) {
     setPending(provider)
     setError(null)
+    rememberReturnTo()
     try {
       const redirectUri = provider === 'kakao' || provider === 'google'
         ? `${window.location.origin}/${provider}/callback`

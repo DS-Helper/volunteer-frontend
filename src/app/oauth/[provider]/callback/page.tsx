@@ -27,7 +27,9 @@ export function OAuthCallbackPage({ providerOverride }: { providerOverride?: OAu
     void completeOAuthLogin(provider, { code, state })
       .then((tokens) => {
         saveAuthTokens(tokens)
-        return hydrateUserStore().then(() => router.replace('/volunteer'))
+        const destination = window.sessionStorage.getItem('oauth-return-to') || '/volunteer'
+        window.sessionStorage.removeItem('oauth-return-to')
+        return hydrateUserStore().then(() => router.replace(destination))
       })
       .catch(() => setMessage('로그인에 실패했습니다. 다시 시도해 주세요.'))
   }, [code, invalidResponse, provider, router, state])
