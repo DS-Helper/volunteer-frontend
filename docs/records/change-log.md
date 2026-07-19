@@ -138,3 +138,9 @@
 - 변경: 공통 관리자 layout metadata 및 로딩·오류 상태 추가
 - 제외: Netlify 사용량 초과에 따른 배포 문제, localStorage 토큰 저장 방식 변경
 - 검증: `npm.cmd run lint`, `npm.cmd run typecheck`
+
+### FE-016 — 요청 중복·권한·폼 피드백 개선
+
+- 상태: 진행 중
+- 변경: API 요청 deduplication, 공통 오류/403 UI, React Query key·무효화, 관리자 신청 페이지네이션, 일정 이미지 업로드 상태 및 이탈 경고
+- 검증: `npm.cmd run lint`, `npm.cmd run typecheck`
