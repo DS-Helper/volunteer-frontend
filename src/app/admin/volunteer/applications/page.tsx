@@ -95,6 +95,12 @@ export default function AdminVolunteerApplicationsPage() {
       ) : (
         <div className="mt-6"><EmptyState title="승인 대기 신청자가 없습니다." description="검색 조건을 변경해 다시 확인해 주세요." /></div>
       )}
+      {result.totalPages > 1 ? <nav className="mt-6 flex items-center justify-center gap-2" aria-label="신청 목록 페이지">
+        {Array.from({ length: result.totalPages }, (_, index) => {
+          const query = new URLSearchParams(); if (name) query.set('name', name); if (phone) query.set('phone', phone); if (status) query.set('status', status); query.set('page', String(index));
+          return <Link key={index} href={`/admin/volunteer/applications?${query.toString()}`} aria-current={index === page ? 'page' : undefined} className={`grid size-9 place-items-center rounded-lg text-sm font-bold ${index === page ? 'bg-[var(--brand)] text-white' : 'border border-[var(--line)]'}`}>{index + 1}</Link>
+        })}
+      </nav> : null}
     </div>
   );
 }
