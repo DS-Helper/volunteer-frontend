@@ -7,6 +7,9 @@
 
 ## 사용자 라우트
 
+| `/login` | OAuth 로그인 시작 | Client | provider login-url 이동 |
+| `/oauth/[provider]/callback` | OAuth code callback | Client | JWT 저장 후 봉사단으로 이동 |
+
 | URL | 화면 | 초기 렌더링 | 경계 |
 | --- | --- | --- | --- |
 | `/volunteer` | 소개 | Server | `loading.tsx` 선택 |

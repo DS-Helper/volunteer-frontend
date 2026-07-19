@@ -24,6 +24,14 @@
 - 변경: 루트 layout을 request-time dynamic으로 지정해 API 데이터를 build 결과에 고정하지 않도록 했다.
 - 비범위: backend CORS·인증 서버 설정 변경.
 
+### FE-013 — OAuth 로그인·회원가입과 JWT 저장
+
+- 상태: 검증 중
+- API 단계: BE 웹 OAuth 실 API
+- 변경: 카카오·네이버·구글 login-url/callback 화면과 `localStorage` JWT 저장을 추가했다.
+- 변경: 공통 API Client가 브라우저 저장 access token을 `Authorization: Bearer` 헤더로 첨부한다.
+- 비범위: provider console·BE secret/CORS 설정 변경.
+
 ### FE-009 — 출석 Enum 단일화
 
 - 상태: 완료

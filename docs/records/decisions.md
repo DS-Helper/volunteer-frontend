@@ -22,6 +22,7 @@
 | ADR-011 | 승인 | 출석 상태는 DSHelper(BE) `VolunteerParticipationStatus`만 사용 | `APPLIED`를 UI의 미처리로 파생하고 `CANCELED`는 출석 대상에서 제외한다. 별도 attendance Enum·필드를 두지 않는다. |
 | ADR-012 | 승인 | Netlify 최신 Next.js Runtime을 명시적 Build plugin으로 등록 | 자동 어댑터 감지가 실행되지 않아 `@netlify/plugin-nextjs` 최신 버전을 devDependency와 `netlify.toml`에 등록한다. `npm run build`, `.next`도 함께 명시해 UI 설정 누락과 정적 파일 전용 배포를 방지한다. |
 | ADR-013 | 승인 | 실 API를 기본으로 사용하고 Mock은 명시적 flag에서만 활성화 | production에서 환경변수 누락으로 Mock 화면이 노출되는 것을 방지한다. `NEXT_PUBLIC_USE_VOLUNTEER_MOCKS=true`일 때만 Mock handler를 주입하고, 그 외에는 공통 API client가 실제 backend를 호출한다. |
+| ADR-014 | 승인 | OAuth access token은 브라우저 `localStorage.accessToken`에 저장하고 API Client가 Bearer 헤더를 자동 첨부 | 현재 BE 웹 OAuth가 토큰을 body·header로 반환하고 쿠키를 사용하지 않는다. client-only 인증 경계에서만 토큰을 읽으며 provider secret은 프론트에 노출하지 않는다. |
 
 ## 결정 추가 형식
 

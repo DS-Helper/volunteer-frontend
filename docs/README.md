@@ -85,6 +85,7 @@
 | FE-010 | 단원 상세 및 검색 계약 정합화 | 완료 | 관리자 단원 및 API 계약 문서 | 없음 |
 | FE-011 | Netlify Next.js 배포 대상 설정 | 검증 중 | 환경·실행 안내 | Netlify 재배포 및 운영 URL 확인 |
 | FE-012 | 실 API 기본 전환 | 진행 중 | API 계약 및 환경·실행 안내 | 백엔드 CORS·인증 설정 |
+| FE-013 | OAuth 로그인·회원가입과 JWT 저장 | 진행 중 | 인증 API 및 환경·실행 안내 | Provider redirect URI·OAuth client 등록 |
 
 ## 작업 기록 절차
 

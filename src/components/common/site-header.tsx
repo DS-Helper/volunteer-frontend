@@ -35,8 +35,14 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
-        <div className="ml-auto flex items-center gap-2">
-          <Link
+          <div className="ml-auto flex items-center gap-2">
+            <Link
+              href="/login"
+              className="hidden rounded-[5px] border border-[#d5d5d5] px-4 py-2 text-sm font-semibold text-[var(--text)] hover:border-[var(--brand)] hover:text-[var(--brand-dark)] sm:inline-flex"
+            >
+              로그인
+            </Link>
+            <Link
             href="/admin/volunteer/applications"
             className="hidden rounded-full bg-[var(--brand-soft)] px-4 py-2 text-sm font-bold text-[var(--brand-dark)] transition-colors hover:bg-[#d9f6e4] sm:inline-flex"
           >
