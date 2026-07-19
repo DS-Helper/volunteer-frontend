@@ -192,9 +192,10 @@ export class ApiClient {
     const promise = this.requestInternal<TResult, TBody>(path, options)
     if (!options.signal) {
       inflightRequests.set(key, promise)
-      void promise.finally(() => {
+      const cleanup = () => {
         if (inflightRequests.get(key) === promise) inflightRequests.delete(key)
-      })
+      }
+      void promise.then(cleanup, cleanup)
     }
     return promise
   }

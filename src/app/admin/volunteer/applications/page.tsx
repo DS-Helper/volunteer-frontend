@@ -68,6 +68,7 @@ export default function AdminVolunteerApplicationsPage() {
       {result.content.length ? (
         <div className="mt-4 overflow-x-auto rounded-2xl border border-[var(--line)] bg-white">
           <table className="w-full min-w-[820px] border-collapse text-left text-sm">
+            <caption className="sr-only">가입 신청 목록</caption>
             <thead className="bg-[var(--surface)] text-xs text-[var(--text-muted)]">
               <tr>
                 <th className="px-5 py-4 font-extrabold">신청자</th>

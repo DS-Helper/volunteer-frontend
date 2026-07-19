@@ -42,6 +42,7 @@ export default function AdminVolunteerMembersPage() {
       {result.content.length ? (
         <div className="mt-6 overflow-x-auto rounded-2xl border border-[var(--line)] bg-white">
           <table className="w-full min-w-[900px] text-left text-sm">
+            <caption className="sr-only">봉사단원 목록</caption>
             <thead className="bg-[var(--surface)] text-xs text-[var(--text-muted)]"><tr><th className="px-5 py-4">이름</th><th className="px-5 py-4">성별</th><th className="px-5 py-4">연락처</th><th className="px-5 py-4">가입일</th><th className="px-5 py-4">활동 상태</th><th className="px-5 py-4">누적 참여</th><th className="px-5 py-4"><span className="sr-only">상세</span></th></tr></thead>
             <tbody className="divide-y divide-[var(--line)]">
               {result.content.map((member) => (

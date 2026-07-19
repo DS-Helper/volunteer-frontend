@@ -51,6 +51,7 @@ export default function AdminVolunteerEventsPage() {
       {result.content.length ? (
         <div className="mt-6 overflow-x-auto rounded-2xl border border-[var(--line)] bg-white">
           <table className="w-full min-w-[980px] text-left text-sm">
+            <caption className="sr-only">봉사 일정 목록</caption>
             <thead className="bg-[var(--surface)] text-xs text-[var(--text-muted)]"><tr><th className="px-5 py-4">일정</th><th className="px-5 py-4">일시</th><th className="px-5 py-4">상태</th><th className="px-5 py-4">공개</th><th className="px-5 py-4">참여 인원</th><th className="px-5 py-4"><span className="sr-only">상세</span></th></tr></thead>
             <tbody className="divide-y divide-[var(--line)]">{result.content.map((event) => (
               <tr key={event.id} className="hover:bg-[#fbfcfb]">

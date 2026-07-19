@@ -107,4 +107,23 @@ describe('ApiClient와 MSW 통합', () => {
       source: 'mock',
     });
   });
+
+  it('동일한 진행 중 요청은 하나로 합친다', async () => {
+    let calls = 0;
+    server.use(
+      http.get(`${API_BASE_URL}/dedupe`, async () => {
+        calls += 1;
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        return HttpResponse.json({ data: { ok: true } });
+      }),
+    );
+    const client = new ApiClient(API_BASE_URL);
+    const [first, second] = await Promise.all([
+      client.get('/dedupe'),
+      client.get('/dedupe'),
+    ]);
+    expect(first).toEqual({ ok: true });
+    expect(second).toEqual({ ok: true });
+    expect(calls).toBe(1);
+  });
 });
