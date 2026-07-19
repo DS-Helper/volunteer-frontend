@@ -89,6 +89,8 @@
 
 ## 작업 기록 절차
 
+- [봉사 API 계약 및 smoke check](contracts/volunteer-api-contract.md)
+
 - [ ] 작업 ID와 관련 문서를 정한다.
 - [ ] 구현 전에 요구사항 절, 범위, 비범위, 완료 조건을 기록한다.
 - [ ] Mock은 실제 응답 Envelope·Enum·오류 코드를 따라 격리한다.
