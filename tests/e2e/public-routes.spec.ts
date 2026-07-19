@@ -45,7 +45,7 @@ test.describe('봉사단 사용자 경로 smoke', () => {
   test('OAuth callback은 state가 없으면 로그인을 완료하지 않는다', async ({ page }) => {
     const response = await page.goto('/google/callback?code=test');
     expect(response?.ok()).toBe(true);
-    await expect(page.getByRole('status')).toContainText('올바르지 않습니다|일치하지 않습니다');
+    await expect(page.getByRole('status')).toContainText(/올바르지 않습니다|일치하지 않습니다/);
   });
 
   test('로그인 화면은 OAuth provider 선택지를 제공한다', async ({ page }) => {
