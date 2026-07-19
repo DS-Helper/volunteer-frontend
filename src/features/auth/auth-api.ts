@@ -25,6 +25,8 @@ export function completeOAuthLogin(
   provider: OAuthProvider,
   input: { code: string; state?: string },
 ): Promise<JwtResponse> {
-  const body = provider === 'kakao' || provider === 'naver' ? input : { code: input.code }
+  const body = provider === 'kakao' || provider === 'naver' || provider === 'google'
+    ? input
+    : { code: input.code }
   return apiClient.post<JwtResponse>(`${providerPaths[provider]}/login`, body)
 }
