@@ -11,7 +11,7 @@ export default function OAuthCallbackPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [message, setMessage] = useState('로그인 처리 중입니다…')
-  const provider = params.provider as OAuthProvider
+  const provider = (params.provider ?? 'kakao') as OAuthProvider
   const code = searchParams.get('code')
   const state = searchParams.get('state') ?? undefined
   const invalidResponse = !providers.includes(provider) || !code
