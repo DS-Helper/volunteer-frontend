@@ -1,4 +1,5 @@
 import { ApiError, type ApiErrorPayload } from '@/lib/errors'
+import { recordApiMetric } from './api-metrics'
 
 import type {
   ApiQuery,
@@ -204,6 +205,7 @@ export class ApiClient {
     path: string,
     options: ApiRequestOptions<TBody, TResult> = {},
   ): Promise<TResult> {
+    const startedAt = performance.now()
     const {
       body,
       headers: initialHeaders,
@@ -261,6 +263,7 @@ export class ApiClient {
         signal,
       } as RequestInit & { next?: typeof next })
     } catch (error) {
+      recordApiMetric('NETWORK_ERROR', performance.now() - startedAt)
       throw new ApiError({
         code: 'NETWORK_ERROR',
         message: DEFAULT_ERROR_MESSAGE,
@@ -269,6 +272,7 @@ export class ApiClient {
     }
 
     if (!response.ok) {
+      recordApiMetric(response.status, performance.now() - startedAt)
       if (response.status === 401 && typeof window !== 'undefined') {
         window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY)
         window.localStorage.removeItem('refreshToken')
@@ -280,6 +284,7 @@ export class ApiClient {
       throw await parseErrorResponse(response)
     }
 
+    recordApiMetric(response.status, performance.now() - startedAt)
     return parseSuccessResponse<TResult>(response, responseType, unwrapData)
   }
 
