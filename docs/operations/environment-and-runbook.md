@@ -68,7 +68,7 @@ FE-013은 BE의 웹 OAuth 계약을 사용한다. 로그인 URL은 `GET /oauth/{
 프론트 callback URI는 다음과 같다.
 
 ```text
-https://volunteer.dshelper.kr/oauth/kakao/callback
+https://volunteer.dshelper.kr/kakao/callback
 https://volunteer.dshelper.kr/oauth/naver/callback
 https://volunteer.dshelper.kr/oauth/google/callback
 ```
@@ -78,7 +78,7 @@ BE 테스트 환경에는 다음 provider 설정이 필요하다.
 ```text
 KAKAO_CLIENT_ID
 KAKAO_CLIENT_SECRET
-KAKAO_REDIRECT_URI=https://volunteer.dshelper.kr/oauth/kakao/callback
+KAKAO_REDIRECT_URI=https://volunteer.dshelper.kr/kakao/callback
 NAVER_CLIENT_ID
 NAVER_CLIENT_SECRET
 NAVER_CLIENT_URI=https://volunteer.dshelper.kr
