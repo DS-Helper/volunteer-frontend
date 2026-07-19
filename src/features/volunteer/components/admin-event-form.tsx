@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ImagePlus, LoaderCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FeedbackBanner } from '@/components/common/feedback-banner';
 import {
@@ -51,15 +51,23 @@ export function AdminEventForm({
 }) {
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'failed'>('idle');
   const {
     register,
     handleSubmit,
     setError,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<VolunteerEventFormValues>({
     resolver: zodResolver(volunteerEventSchema),
     defaultValues: { ...initialFormValues, ...initialValues },
   });
+
+  useEffect(() => {
+    if (!isDirty || isSubmitting) return;
+    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ''; };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [isDirty, isSubmitting]);
 
   const onSubmit = handleSubmit(async (values) => {
     setSubmitError(null);
@@ -79,8 +87,9 @@ export function AdminEventForm({
 
     try {
       const uploadedImage = image
-        ? await uploadAdminVolunteerEventImage(image)
+        ? (setUploadStatus('uploading'), await uploadAdminVolunteerEventImage(image).catch((error) => { setUploadStatus('failed'); throw error; }))
         : null;
+      setUploadStatus('idle');
       const imageFileId = uploadedImage?.volunteerFileId ?? currentImageFileId;
       if (!imageFileId) {
         setError('image', { message: '일정 이미지를 선택해 주세요.' });
@@ -136,6 +145,7 @@ export function AdminEventForm({
         </FeedbackBanner>
       ) : null}
       {submitError ? <FeedbackBanner variant="error">{submitError}</FeedbackBanner> : null}
+      <p className="sr-only" aria-live="polite">{uploadStatus === 'uploading' ? '이미지를 업로드하는 중입니다.' : uploadStatus === 'failed' ? '이미지 업로드에 실패했습니다. 다시 시도해 주세요.' : ''}</p>
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="sm:col-span-2">
