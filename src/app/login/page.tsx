@@ -24,7 +24,10 @@ export default function LoginPage() {
         ? `${window.location.origin}/${provider}/callback`
         : undefined
       const url = await getOAuthLoginUrl(provider, redirectUri)
-      window.location.assign(url)
+      const target = new URL(url)
+      const state = target.searchParams.get('state')
+      if (state) window.sessionStorage.setItem(`oauth-state:${provider}`, state)
+      window.location.assign(target.toString())
     } catch (cause) {
       setError(cause instanceof ApiError ? cause.message : '로그인 주소를 불러오지 못했습니다.')
       setPending(null)

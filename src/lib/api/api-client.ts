@@ -245,6 +245,14 @@ export class ApiClient {
     }
 
     if (!response.ok) {
+      if (response.status === 401 && typeof window !== 'undefined') {
+        window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY)
+        window.localStorage.removeItem('refreshToken')
+        window.dispatchEvent(new Event('dshelper-auth-changed'))
+        if (!window.location.pathname.startsWith('/login')) {
+          window.location.assign(`/login?returnTo=${encodeURIComponent(window.location.pathname)}`)
+        }
+      }
       throw await parseErrorResponse(response)
     }
 

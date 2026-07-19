@@ -18,6 +18,12 @@ export function OAuthCallbackPage({ providerOverride }: { providerOverride?: OAu
 
   useEffect(() => {
     if (invalidResponse || !code) return
+    const expectedState = window.sessionStorage.getItem(`oauth-state:${provider}`)
+    if (!state || !expectedState || state !== expectedState) {
+      window.setTimeout(() => setMessage('OAuth 인증 상태가 일치하지 않습니다. 다시 로그인해 주세요.'), 0)
+      return
+    }
+    window.sessionStorage.removeItem(`oauth-state:${provider}`)
     void completeOAuthLogin(provider, { code, state })
       .then((tokens) => {
         saveAuthTokens(tokens)
