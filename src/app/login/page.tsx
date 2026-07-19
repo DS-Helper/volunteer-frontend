@@ -20,7 +20,10 @@ export default function LoginPage() {
     setPending(provider)
     setError(null)
     try {
-      const url = await getOAuthLoginUrl(provider)
+      const redirectUri = provider === 'kakao'
+        ? `${window.location.origin}/oauth/kakao/callback`
+        : undefined
+      const url = await getOAuthLoginUrl(provider, redirectUri)
       window.location.assign(url)
     } catch (cause) {
       setError(cause instanceof ApiError ? cause.message : '로그인 주소를 불러오지 못했습니다.')
