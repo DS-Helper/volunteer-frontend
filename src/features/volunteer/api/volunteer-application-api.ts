@@ -34,10 +34,11 @@ export function createVolunteerApplication(
   }).then(normalizeApplication)
 }
 
-export function getMyLatestVolunteerApplication(): Promise<VolunteerApplication> {
+export function getMyLatestVolunteerApplication(signal?: AbortSignal): Promise<VolunteerApplication> {
   return volunteerApiRequest<BackendApplication>(`${APPLICATIONS_PATH}/me/latest`, {
     cache: 'no-store',
     method: 'GET',
+    signal,
   }).then(normalizeApplication)
 }
 

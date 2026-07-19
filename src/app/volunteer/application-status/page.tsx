@@ -47,7 +47,8 @@ export default function VolunteerApplicationStatusPage() {
 
   useEffect(() => {
     let active = true;
-    void getMyLatestVolunteerApplication()
+    const controller = new AbortController();
+    void getMyLatestVolunteerApplication(controller.signal)
       .then((result) => {
         if (active) setApplication(result);
       })
@@ -56,6 +57,7 @@ export default function VolunteerApplicationStatusPage() {
       });
     return () => {
       active = false;
+      controller.abort();
     };
   }, []);
 

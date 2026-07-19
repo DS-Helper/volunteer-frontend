@@ -217,10 +217,11 @@ export function cancelAdminVolunteerEvent(
 
 export function getAdminVolunteerEventParticipations(
   eventId: string | number,
+  signal?: AbortSignal,
 ): Promise<AdminVolunteerEventParticipations> {
   return volunteerApiRequest(
     `${ADMIN_EVENTS_PATH}/${eventId}/participations`,
-    { cache: 'no-store', method: 'GET' },
+    { cache: 'no-store', method: 'GET', signal },
   )
 }
 

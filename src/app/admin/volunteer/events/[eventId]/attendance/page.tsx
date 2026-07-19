@@ -14,7 +14,13 @@ export default function AdminVolunteerAttendancePage() {
   const id = eventId;
   const [data, setData] = useState<Awaited<ReturnType<typeof getAdminVolunteerEventParticipations>> | null>(null);
   const [error, setError] = useState(false);
-  useEffect(() => { void getAdminVolunteerEventParticipations(id).then(setData).catch(() => setError(true)); }, [id]);
+  useEffect(() => {
+    const controller = new AbortController();
+    void getAdminVolunteerEventParticipations(id, controller.signal).then(setData).catch((cause) => {
+      if (!(cause instanceof DOMException && cause.name === 'AbortError')) setError(true);
+    });
+    return () => controller.abort();
+  }, [id]);
   if (error) return <main className="mx-auto max-w-[1120px] px-5 py-20 text-center" role="alert">출석 정보를 불러오지 못했습니다.</main>;
   if (!data) return <main className="mx-auto max-w-[1120px] px-5 py-20 text-center" role="status">출석 정보를 불러오는 중입니다…</main>;
   return (
