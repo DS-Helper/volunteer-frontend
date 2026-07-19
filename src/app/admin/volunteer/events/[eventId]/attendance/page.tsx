@@ -1,20 +1,22 @@
-import type { Metadata } from 'next';
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { PageHeading } from '@/components/common/page-heading';
 import { EmptyState } from '@/components/common/empty-state';
 import { AttendanceManager } from '@/features/volunteer/components/attendance-manager';
 import { getAdminVolunteerEventParticipations } from '@/features/volunteer/api';
 import { formatVolunteerDateTimeRange } from '@/lib/date';
-import { isApiError } from '@/lib/errors';
 
-export const metadata: Metadata = { title: '관리자 · 출석 관리' };
-
-export default async function AdminVolunteerAttendancePage({ params }: PageProps<'/admin/volunteer/events/[eventId]/attendance'>) {
-  const { eventId } = await params;
+export default function AdminVolunteerAttendancePage() {
+  const { eventId } = useParams<{ eventId: string }>();
   const id = eventId;
-  let data;
-  try { data = await getAdminVolunteerEventParticipations(id); } catch (error) { if (isApiError(error) && error.code === 'NOT_FOUND') notFound(); throw error; }
+  const [data, setData] = useState<Awaited<ReturnType<typeof getAdminVolunteerEventParticipations>> | null>(null);
+  const [error, setError] = useState(false);
+  useEffect(() => { void getAdminVolunteerEventParticipations(id).then(setData).catch(() => setError(true)); }, [id]);
+  if (error) return <main className="mx-auto max-w-[1120px] px-5 py-20 text-center" role="alert">출석 정보를 불러오지 못했습니다.</main>;
+  if (!data) return <main className="mx-auto max-w-[1120px] px-5 py-20 text-center" role="status">출석 정보를 불러오는 중입니다…</main>;
   return (
     <div className="mx-auto w-full max-w-[1120px] px-5 py-10 sm:px-8 sm:py-14">
       <Link href={`/admin/volunteer/events/${id}`} className="text-sm font-bold text-[var(--text-muted)]">← 일정 상세</Link>

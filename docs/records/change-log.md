@@ -130,3 +130,11 @@
 - 상태: 완료
 - 변경: 신청 현황 페이지를 Client Component로 전환해 `localStorage.accessToken` 기반 `Authorization: Bearer` 헤더가 실제 API 요청에 포함되도록 수정
 - 검증: `npm.cmd run lint`, `npm.cmd run typecheck`, `git diff --check`
+
+### FE-015 — 관리자 인증 화면 클라이언트 전환
+
+- 상태: 완료
+- 변경: 관리자 신청·단원·일정 상세/목록, 일정 수정, 출석 관리 API 조회를 Client Component로 전환
+- 변경: 공통 관리자 layout metadata 및 로딩·오류 상태 추가
+- 제외: Netlify 사용량 초과에 따른 배포 문제, localStorage 토큰 저장 방식 변경
+- 검증: `npm.cmd run lint`, `npm.cmd run typecheck`

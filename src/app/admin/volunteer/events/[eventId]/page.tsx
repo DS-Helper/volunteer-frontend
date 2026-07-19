@@ -1,23 +1,25 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import { CalendarDays, Eye, MapPin, Users } from 'lucide-react';
-import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 import { PageHeading } from '@/components/common/page-heading';
 import { StatusBadge } from '@/components/common/status-badge';
 import { AdminEventActions } from '@/features/volunteer/components/admin-event-actions';
 import { getAdminVolunteerEvent } from '@/features/volunteer/api';
 import { VOLUNTEER_EVENT_STATUS_LABEL, VOLUNTEER_EVENT_TYPE_LABEL, VOLUNTEER_EVENT_VISIBILITY_LABEL } from '@/features/volunteer/types';
 import { formatVolunteerDateTime, formatVolunteerDateTimeRange } from '@/lib/date';
-import { isApiError } from '@/lib/errors';
 
-export const metadata: Metadata = { title: '관리자 · 일정 상세' };
-
-export default async function AdminVolunteerEventDetailPage({ params }: PageProps<'/admin/volunteer/events/[eventId]'>) {
-  const { eventId } = await params;
+export default function AdminVolunteerEventDetailPage() {
+  const { eventId } = useParams<{ eventId: string }>();
   const id = eventId;
-  let event;
-  try { event = await getAdminVolunteerEvent(id); } catch (error) { if (isApiError(error) && error.code === 'NOT_FOUND') notFound(); throw error; }
+  const [event, setEvent] = useState<Awaited<ReturnType<typeof getAdminVolunteerEvent>> | null>(null);
+  const [error, setError] = useState(false);
+  useEffect(() => { void getAdminVolunteerEvent(id).then(setEvent).catch(() => setError(true)); }, [id]);
+  if (error) return <main className="mx-auto max-w-[1120px] px-5 py-20 text-center" role="alert">일정 정보를 불러오지 못했습니다.</main>;
+  if (!event) return <main className="mx-auto max-w-[1120px] px-5 py-20 text-center" role="status">일정 정보를 불러오는 중입니다…</main>;
   const statusTone = event.status === 'OPEN' ? 'green' : event.status === 'CLOSED' ? 'amber' : event.status === 'COMPLETED' ? 'blue' : event.status === 'CANCELED' ? 'red' : 'gray';
 
   return (

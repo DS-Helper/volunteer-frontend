@@ -1,7 +1,9 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import { Camera, ShieldCheck } from 'lucide-react';
-import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 import { PageHeading } from '@/components/common/page-heading';
 import { StatusBadge } from '@/components/common/status-badge';
 import { AdminApplicationActions } from '@/features/volunteer/components/admin-application-actions';
@@ -11,22 +13,15 @@ import {
   VOLUNTEER_GENDER_LABEL,
 } from '@/features/volunteer/types';
 import { formatVolunteerDateTime } from '@/lib/date';
-import { isApiError } from '@/lib/errors';
 
-export const metadata: Metadata = { title: '관리자 · 가입 신청 상세' };
-
-export default async function AdminVolunteerApplicationDetailPage({
-  params,
-}: PageProps<'/admin/volunteer/applications/[applicationId]'>) {
-  const { applicationId } = await params;
+export default function AdminVolunteerApplicationDetailPage() {
+  const { applicationId } = useParams<{ applicationId: string }>();
   const id = applicationId;
-  let application;
-  try {
-    application = await getAdminVolunteerApplication(id);
-  } catch (error) {
-    if (isApiError(error) && error.code === 'NOT_FOUND') notFound();
-    throw error;
-  }
+  const [application, setApplication] = useState<Awaited<ReturnType<typeof getAdminVolunteerApplication>> | null>(null);
+  const [error, setError] = useState(false);
+  useEffect(() => { void getAdminVolunteerApplication(id).then(setApplication).catch(() => setError(true)); }, [id]);
+  if (error) return <main className="mx-auto max-w-[1100px] px-5 py-20 text-center" role="alert">신청 정보를 불러오지 못했습니다.</main>;
+  if (!application) return <main className="mx-auto max-w-[1100px] px-5 py-20 text-center" role="status">신청 정보를 불러오는 중입니다…</main>;
 
   return (
     <div className="mx-auto w-full max-w-[1100px] px-5 py-10 sm:px-8 sm:py-14">

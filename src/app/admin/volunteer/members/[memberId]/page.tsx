@@ -1,6 +1,8 @@
-import type { Metadata } from 'next';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 import { PageHeading } from '@/components/common/page-heading';
 import { StatusBadge } from '@/components/common/status-badge';
 import { AdminMemberStatusActions } from '@/features/volunteer/components/admin-member-status-actions';
@@ -12,20 +14,15 @@ import {
   type VolunteerMemberParticipationHistoryItem,
 } from '@/features/volunteer/types';
 import { formatVolunteerDate, formatVolunteerDateTime, formatVolunteerDateTimeRange, formatVolunteerHours } from '@/lib/date';
-import { isApiError } from '@/lib/errors';
 
-export const metadata: Metadata = { title: '관리자 · 봉사단원 상세' };
-
-export default async function AdminVolunteerMemberDetailPage({ params }: PageProps<'/admin/volunteer/members/[memberId]'>) {
-  const { memberId } = await params;
+export default function AdminVolunteerMemberDetailPage() {
+  const { memberId } = useParams<{ memberId: string }>();
   const id = memberId;
-  let member;
-  try {
-    member = await getAdminVolunteerMember(id);
-  } catch (error) {
-    if (isApiError(error) && error.code === 'NOT_FOUND') notFound();
-    throw error;
-  }
+  const [member, setMember] = useState<Awaited<ReturnType<typeof getAdminVolunteerMember>> | null>(null);
+  const [error, setError] = useState(false);
+  useEffect(() => { void getAdminVolunteerMember(id).then(setMember).catch(() => setError(true)); }, [id]);
+  if (error) return <main className="mx-auto max-w-[1120px] px-5 py-20 text-center" role="alert">단원 정보를 불러오지 못했습니다.</main>;
+  if (!member) return <main className="mx-auto max-w-[1120px] px-5 py-20 text-center" role="status">단원 정보를 불러오는 중입니다…</main>;
 
   return (
     <div className="mx-auto w-full max-w-[1120px] px-5 py-10 sm:px-8 sm:py-14">

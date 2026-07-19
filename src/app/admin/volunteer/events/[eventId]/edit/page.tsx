@@ -1,19 +1,21 @@
-import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import { PageHeading } from '@/components/common/page-heading';
 import { AdminEventForm } from '@/features/volunteer/components/admin-event-form';
 import { getAdminVolunteerEvent } from '@/features/volunteer/api';
 import { toSeoulDateTimeLocalValue } from '@/lib/date';
-import { isApiError } from '@/lib/errors';
 
-export const metadata: Metadata = { title: '관리자 · 일정 수정' };
-
-export default async function EditAdminVolunteerEventPage({ params }: PageProps<'/admin/volunteer/events/[eventId]/edit'>) {
-  const { eventId } = await params;
+export default function EditAdminVolunteerEventPage() {
+  const { eventId } = useParams<{ eventId: string }>();
   const id = eventId;
-  let event;
-  try { event = await getAdminVolunteerEvent(id); } catch (error) { if (isApiError(error) && error.code === 'NOT_FOUND') notFound(); throw error; }
-  if (!event.capabilities.canEdit) notFound();
+  const [event, setEvent] = useState<Awaited<ReturnType<typeof getAdminVolunteerEvent>> | null>(null);
+  const [error, setError] = useState(false);
+  useEffect(() => { void getAdminVolunteerEvent(id).then(setEvent).catch(() => setError(true)); }, [id]);
+  if (error) return <main className="mx-auto max-w-[960px] px-5 py-20 text-center" role="alert">일정 정보를 불러오지 못했습니다.</main>;
+  if (!event) return <main className="mx-auto max-w-[960px] px-5 py-20 text-center" role="status">일정 정보를 불러오는 중입니다…</main>;
+  if (!event.capabilities.canEdit) return <main className="mx-auto max-w-[960px] px-5 py-20 text-center">수정할 수 없는 일정입니다.</main>;
   return (
     <div className="mx-auto w-full max-w-[960px] px-5 py-10 sm:px-8 sm:py-14">
       <PageHeading eyebrow="Edit event" title="봉사 일정 수정" description={event.title} />

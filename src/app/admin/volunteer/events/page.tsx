@@ -1,5 +1,7 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
-import type { Metadata } from 'next';
 import Link from 'next/link';
 import { EmptyState } from '@/components/common/empty-state';
 import { PageHeading } from '@/components/common/page-heading';
@@ -13,18 +15,20 @@ import {
 } from '@/features/volunteer/types';
 import { formatVolunteerDateTimeRange } from '@/lib/date';
 
-export const metadata: Metadata = { title: '관리자 · 일정 관리' };
-
 const statusTone = {
   DRAFT: 'gray', OPEN: 'green', CLOSED: 'amber', COMPLETED: 'blue', CANCELED: 'red',
 } as const;
 
-export default async function AdminVolunteerEventsPage({ searchParams }: PageProps<'/admin/volunteer/events'>) {
-  const params = await searchParams;
-  const keyword = typeof params.keyword === 'string' ? params.keyword : undefined;
-  const status = typeof params.status === 'string' && params.status in VOLUNTEER_EVENT_STATUS_LABEL ? params.status as VolunteerEventStatus : undefined;
-  const visibility = typeof params.visibility === 'string' && params.visibility in VOLUNTEER_EVENT_VISIBILITY_LABEL ? params.visibility as VolunteerEventVisibility : undefined;
-  const result = await getAdminVolunteerEvents({ keyword, status, visibility, page: 0, size: 20 });
+export default function AdminVolunteerEventsPage() {
+  const [result, setResult] = useState<Awaited<ReturnType<typeof getAdminVolunteerEvents>> | null>(null);
+  const params = new URLSearchParams(typeof window === 'undefined' ? '' : window.location.search);
+  const keyword = params.get('keyword') || undefined;
+  const statusValue = params.get('status');
+  const visibilityValue = params.get('visibility');
+  const status = statusValue && statusValue in VOLUNTEER_EVENT_STATUS_LABEL ? statusValue as VolunteerEventStatus : undefined;
+  const visibility = visibilityValue && visibilityValue in VOLUNTEER_EVENT_VISIBILITY_LABEL ? visibilityValue as VolunteerEventVisibility : undefined;
+  useEffect(() => { void getAdminVolunteerEvents({ keyword, status, visibility, page: 0, size: 20 }).then(setResult); }, [keyword, status, visibility]);
+  if (!result) return <main className="mx-auto max-w-[1240px] px-5 py-20 text-center" role="status">일정 목록을 불러오는 중입니다…</main>;
 
   return (
     <div className="mx-auto w-full max-w-[1240px] px-5 py-10 sm:px-8 sm:py-14">

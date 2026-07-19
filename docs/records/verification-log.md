@@ -154,3 +154,12 @@
 | `npm.cmd run lint` | ESLint | 통과 | 오류·경고 없음 |
 | `npm.cmd run typecheck` | Next typegen + TypeScript | 통과 | 타입 오류 없음 |
 | `git diff --check` | Git whitespace 검사 | 통과 | 공백 오류 없음 |
+
+### FE-015
+
+| 검증 항목 | 방식 | 결과 | 비고 |
+|---|---|---|---|
+| 관리자 인증 API 호출 | 코드 검토 | 통과 | 인증 조회 화면을 Client Component로 전환 |
+| 관리자 로딩·오류 상태 | 코드 검토 | 통과 | 주요 조회 화면에 `role=status`/`role=alert` 추가 |
+| `npm.cmd run lint` | ESLint | 통과 | 오류·경고 없음 |
+| `npm.cmd run typecheck` | Next typegen + TypeScript | 통과 | 타입 오류 없음 |
