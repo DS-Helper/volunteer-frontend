@@ -6,12 +6,12 @@ import { completeOAuthLogin, hydrateUserStore, saveAuthTokens, type OAuthProvide
 
 const providers: OAuthProvider[] = ['kakao', 'naver', 'google']
 
-export default function OAuthCallbackPage() {
+export function OAuthCallbackPage({ providerOverride }: { providerOverride?: OAuthProvider }) {
   const params = useParams<{ provider: string }>()
   const searchParams = useSearchParams()
   const router = useRouter()
   const [message, setMessage] = useState('로그인 처리 중입니다…')
-  const provider = (params.provider ?? 'kakao') as OAuthProvider
+  const provider = providerOverride ?? (params.provider as OAuthProvider)
   const code = searchParams.get('code')
   const state = searchParams.get('state') ?? undefined
   const invalidResponse = !providers.includes(provider) || !code
@@ -28,3 +28,5 @@ export default function OAuthCallbackPage() {
 
   return <main className="mx-auto flex min-h-[50vh] w-full max-w-md items-center justify-center px-5 text-center"><p role="status">{invalidResponse ? 'OAuth 인증 응답이 올바르지 않습니다.' : message}</p></main>
 }
+
+export default OAuthCallbackPage

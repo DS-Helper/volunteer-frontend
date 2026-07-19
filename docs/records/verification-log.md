@@ -136,3 +136,12 @@
 
 - CI에서 요구할 필수 명령과 Node/npm 버전은?
 - 시각 회귀 screenshot을 저장소에서 관리할 것인가?
+
+### FE-013
+
+| 검증 항목 | 방식 | 결과 | 비고 |
+|---|---|---|---|
+| OAuth 정적 callback provider 전달 | 코드 검토 | 통과 | Google은 `providerOverride="google"`, Kakao는 `providerOverride="kakao"` |
+| `npm.cmd run lint` | ESLint | 통과 | 오류·경고 없음 |
+| `npm.cmd run typecheck` | Next typegen + TypeScript | 통과 | 타입 오류 없음 |
+| `git diff --check` | Git whitespace 검사 | 통과 | 공백 오류 없음 |

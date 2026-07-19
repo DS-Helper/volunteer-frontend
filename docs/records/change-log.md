@@ -117,3 +117,10 @@
 ## 미해결 질문
 
 - 릴리스 버전 또는 Git commit 기준 changelog가 필요한가?
+
+### FE-013 — OAuth provider callback routing fix
+
+- 상태: 완료
+- 변경: `/google/callback`과 `/kakao/callback` 정적 라우트가 공통 콜백에 provider를 명시적으로 전달하도록 수정
+- 목적: Google OAuth 완료 후 Kakao 로그인 endpoint로 잘못 전송되는 fallback 방지
+- 검증: `npm.cmd run lint`, `npm.cmd run typecheck`, `git diff --check`
