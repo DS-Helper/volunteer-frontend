@@ -1,5 +1,9 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { clearAuthTokens, getAccessToken } from '@/features/auth';
 
 const navigation = [
   { href: '/volunteer', label: '봉사단 소개' },
@@ -8,6 +12,24 @@ const navigation = [
 ];
 
 export function SiteHeader() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const syncAuth = () => setIsAuthenticated(Boolean(getAccessToken()));
+    syncAuth();
+    window.addEventListener('storage', syncAuth);
+    window.addEventListener('dshelper-auth-changed', syncAuth);
+    return () => {
+      window.removeEventListener('storage', syncAuth);
+      window.removeEventListener('dshelper-auth-changed', syncAuth);
+    };
+  }, []);
+
+  function handleLogout() {
+    clearAuthTokens();
+    window.location.assign('/login');
+  }
+
   return (
     <header className="sticky top-0 z-40 border-b border-black/5 bg-white/95 backdrop-blur">
       <div className="mx-auto flex h-[68px] max-w-[1280px] items-center gap-7 px-5 sm:px-8 lg:px-12">
@@ -36,12 +58,15 @@ export function SiteHeader() {
           ))}
         </nav>
           <div className="ml-auto flex items-center gap-2">
-            <Link
-              href="/login"
-              className="hidden rounded-[5px] border border-[#d5d5d5] px-4 py-2 text-sm font-semibold text-[var(--text)] hover:border-[var(--brand)] hover:text-[var(--brand-dark)] sm:inline-flex"
-            >
-              로그인
-            </Link>
+            {isAuthenticated ? (
+              <button type="button" onClick={handleLogout} className="hidden rounded-[5px] border border-[#d5d5d5] px-4 py-2 text-sm font-semibold text-[var(--text)] hover:border-[var(--brand)] hover:text-[var(--brand-dark)] sm:inline-flex">
+                로그아웃
+              </button>
+            ) : (
+              <Link href="/login" className="hidden rounded-[5px] border border-[#d5d5d5] px-4 py-2 text-sm font-semibold text-[var(--text)] hover:border-[var(--brand)] hover:text-[var(--brand-dark)] sm:inline-flex">
+                로그인
+              </Link>
+            )}
             <Link
             href="/admin/volunteer/applications"
             className="hidden rounded-full bg-[var(--brand-soft)] px-4 py-2 text-sm font-bold text-[var(--brand-dark)] transition-colors hover:bg-[#d9f6e4] sm:inline-flex"
