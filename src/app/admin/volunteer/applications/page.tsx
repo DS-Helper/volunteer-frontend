@@ -11,6 +11,7 @@ import {
   type VolunteerApplicationStatus,
 } from '@/features/volunteer/types';
 import { formatVolunteerDateTime } from '@/lib/date';
+import { ApiErrorState } from '@/components/common/api-error-state';
 
 const statusTone = {
   PENDING: 'amber',
@@ -21,6 +22,7 @@ const statusTone = {
 
 export default function AdminVolunteerApplicationsPage() {
   const [result, setResult] = useState<Awaited<ReturnType<typeof getAdminVolunteerApplications>> | null>(null);
+  const [error, setError] = useState<unknown>(null);
   const params = new URLSearchParams(typeof window === 'undefined' ? '' : window.location.search);
   const nameValue = params.get('name');
   const phoneValue = params.get('phone');
@@ -32,7 +34,8 @@ export default function AdminVolunteerApplicationsPage() {
     : undefined;
   const pageValue = params.get('page');
   const page = pageValue && Number(pageValue) >= 0 ? Number(pageValue) : 0;
-  useEffect(() => { void getAdminVolunteerApplications({ name, phone, status, page, size: 20 }).then(setResult); }, [name, phone, status, page]);
+  useEffect(() => { void getAdminVolunteerApplications({ name, phone, status, page, size: 20 }).then(setResult).catch(setError); }, [name, phone, status, page]);
+  if (error) return <main className="mx-auto max-w-[1240px] px-5 py-20"><ApiErrorState error={error} onRetry={() => window.location.reload()} /></main>;
   if (!result) return <main className="mx-auto max-w-[1240px] px-5 py-20 text-center" role="status">신청 목록을 불러오는 중입니다…</main>;
 
   return (
