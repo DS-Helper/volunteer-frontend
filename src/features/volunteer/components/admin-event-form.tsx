@@ -52,6 +52,7 @@ export function AdminEventForm({
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'failed'>('idle');
+  const [uploadProgress, setUploadProgress] = useState(0);
   const {
     register,
     handleSubmit,
@@ -87,7 +88,7 @@ export function AdminEventForm({
 
     try {
       const uploadedImage = image
-        ? (setUploadStatus('uploading'), await uploadAdminVolunteerEventImage(image).catch((error) => { setUploadStatus('failed'); throw error; }))
+        ? (setUploadStatus('uploading'), setUploadProgress(0), await uploadAdminVolunteerEventImage(image, setUploadProgress).catch((error) => { setUploadStatus('failed'); throw error; }))
         : null;
       setUploadStatus('idle');
       const imageFileId = uploadedImage?.volunteerFileId ?? currentImageFileId;
@@ -145,7 +146,8 @@ export function AdminEventForm({
         </FeedbackBanner>
       ) : null}
       {submitError ? <FeedbackBanner variant="error">{submitError}</FeedbackBanner> : null}
-      <p className="sr-only" aria-live="polite">{uploadStatus === 'uploading' ? '이미지를 업로드하는 중입니다.' : uploadStatus === 'failed' ? '이미지 업로드에 실패했습니다. 다시 시도해 주세요.' : ''}</p>
+      <p className="sr-only" aria-live="polite">{uploadStatus === 'uploading' ? `이미지를 업로드하는 중입니다. ${uploadProgress}%` : uploadStatus === 'failed' ? '이미지 업로드에 실패했습니다. 다시 시도해 주세요.' : ''}</p>
+      {uploadStatus === 'uploading' ? <progress className="mt-3 h-2 w-full" max={100} value={uploadProgress} aria-label="이미지 업로드 진행률" /> : null}
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="sm:col-span-2">

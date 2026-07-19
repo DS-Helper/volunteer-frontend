@@ -22,6 +22,8 @@ import type {
 import type { PageResponse } from '@/lib/api'
 
 import { volunteerApiRequest } from './volunteer-api-request'
+import { apiClient } from '@/lib/api'
+import { getAccessToken } from '@/features/auth'
 
 const ADMIN_VOLUNTEER_PATH = '/api/v1/admin/volunteer'
 const ADMIN_APPLICATIONS_PATH = `${ADMIN_VOLUNTEER_PATH}/applications`
@@ -153,12 +155,29 @@ export function createAdminVolunteerEvent(
 
 export function uploadAdminVolunteerEventImage(
   image: File,
+  onProgress?: (percent: number) => void,
 ): Promise<AdminVolunteerEventImageUploadResponse> {
+  if (typeof XMLHttpRequest === 'undefined') {
+    return volunteerApiRequest(`${ADMIN_VOLUNTEER_PATH}/event-images`, { body: (() => { const form = new FormData(); form.append('image', image); return form })(), method: 'POST' })
+  }
   const body = new FormData()
   body.append('image', image)
-  return volunteerApiRequest(`${ADMIN_VOLUNTEER_PATH}/event-images`, {
-    body,
-    method: 'POST',
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', `${apiClient.baseUrl}${ADMIN_VOLUNTEER_PATH}/event-images`)
+    xhr.setRequestHeader('Accept', 'application/json')
+    const token = getAccessToken()
+    if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`)
+    xhr.upload.onprogress = (event) => { if (event.lengthComputable) onProgress?.(Math.round((event.loaded / event.total) * 100)) }
+    xhr.onerror = () => reject(new Error('이미지 업로드 중 네트워크 오류가 발생했습니다.'))
+    xhr.onload = () => {
+      try {
+        const payload = JSON.parse(xhr.responseText) as { data?: AdminVolunteerEventImageUploadResponse }
+        if (xhr.status >= 200 && xhr.status < 300) resolve(payload.data ?? payload as unknown as AdminVolunteerEventImageUploadResponse)
+        else reject(new Error('이미지 업로드에 실패했습니다.'))
+      } catch { reject(new Error('이미지 업로드 응답을 해석하지 못했습니다.')) }
+    }
+    xhr.send(body)
   })
 }
 
