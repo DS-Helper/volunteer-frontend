@@ -1,16 +1,16 @@
-import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+'use client';
+
+import { useEffect, useState } from 'react';
 import { PageHeading } from '@/components/common/page-heading';
 import { VolunteerApplicationForm } from '@/features/volunteer/components/application-form';
 import { getMyLatestVolunteerApplication } from '@/features/volunteer/api';
 
-export const metadata: Metadata = {
-  title: '가입 신청 수정',
-};
-
-export default async function VolunteerApplicationEditPage() {
-  const application = await getMyLatestVolunteerApplication();
-  if (!application || !application.capabilities.canEdit) notFound();
+export default function VolunteerApplicationEditPage() {
+  const [application, setApplication] = useState<Awaited<ReturnType<typeof getMyLatestVolunteerApplication>> | null>(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => { void getMyLatestVolunteerApplication().then(setApplication).finally(() => setLoading(false)); }, []);
+  if (loading) return <main className="mx-auto max-w-[900px] px-5 py-20 text-center" role="status">신청서를 불러오는 중입니다…</main>;
+  if (!application || !application.capabilities.canEdit) return <main className="mx-auto max-w-[900px] px-5 py-20 text-center">수정할 수 있는 신청서가 없습니다.</main>;
 
   return (
     <div className="mx-auto w-full max-w-[900px] px-5 py-14 sm:px-8 sm:py-20 lg:px-0">
