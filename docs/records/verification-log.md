@@ -50,6 +50,7 @@
 | `npm.cmd run typecheck` | 정적 | 통과 | `next typegen && tsc --noEmit` 통과 |
 | `npm.cmd run test:run` | MSW/fixture | 통과 | 6 files, 33 tests 통과 |
 | OAuth provider 실제 로그인 | 외부 provider | 미실행 | BE client secret, redirect URI, CORS 설정 필요 |
+| 로그인 후 user-store hydrate | 정적/BE 계약 | 통과 | `/user/my-identifier`, `/user/my-info` 병렬 조회와 로그아웃 초기화 코드 확인 |
 
 | 검증 | 데이터 | 상태 | 결과 |
 | --- | --- | --- | --- |

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
-import { completeOAuthLogin, saveAuthTokens, type OAuthProvider } from '@/features/auth'
+import { completeOAuthLogin, hydrateUserStore, saveAuthTokens, type OAuthProvider } from '@/features/auth'
 
 const providers: OAuthProvider[] = ['kakao', 'naver', 'google']
 
@@ -21,7 +21,7 @@ export default function OAuthCallbackPage() {
     void completeOAuthLogin(provider, { code, state })
       .then((tokens) => {
         saveAuthTokens(tokens)
-        router.replace('/volunteer')
+        return hydrateUserStore().then(() => router.replace('/volunteer'))
       })
       .catch(() => setMessage('로그인에 실패했습니다. 다시 시도해 주세요.'))
   }, [code, invalidResponse, provider, router, state])

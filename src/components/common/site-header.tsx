@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { clearAuthTokens, getAccessToken } from '@/features/auth';
+import { clearAuthTokens, clearUserStore, getAccessToken } from '@/features/auth';
 
 const navigation = [
   { href: '/volunteer', label: '봉사단 소개' },
@@ -27,6 +27,7 @@ export function SiteHeader() {
 
   function handleLogout() {
     clearAuthTokens();
+    clearUserStore();
     window.location.assign('/login');
   }
 
