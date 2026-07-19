@@ -1,4 +1,6 @@
-import type { Metadata } from 'next';
+'use client';
+
+import { useEffect, useState } from 'react';
 import { CheckCircle2, Clock3, RotateCcw, XCircle } from 'lucide-react';
 import Link from 'next/link';
 import { EmptyState } from '@/components/common/empty-state';
@@ -11,10 +13,6 @@ import {
   VOLUNTEER_GENDER_LABEL,
 } from '@/features/volunteer/types';
 import { formatVolunteerDateTime } from '@/lib/date';
-
-export const metadata: Metadata = {
-  title: '가입 신청 현황',
-};
 
 const statusContent = {
   PENDING: {
@@ -43,8 +41,23 @@ const statusContent = {
   },
 };
 
-export default async function VolunteerApplicationStatusPage() {
-  const application = await getMyLatestVolunteerApplication();
+export default function VolunteerApplicationStatusPage() {
+  const [application, setApplication] = useState<Awaited<ReturnType<typeof getMyLatestVolunteerApplication>> | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    void getMyLatestVolunteerApplication()
+      .then((result) => {
+        if (active) setApplication(result);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <div className="mx-auto w-full max-w-[900px] px-5 py-14 sm:px-8 sm:py-20 lg:px-0">
@@ -53,7 +66,11 @@ export default async function VolunteerApplicationStatusPage() {
         title="가입 신청 현황"
         description="서버에서 확인한 최신 신청 상태와 가능한 다음 행동을 안내합니다."
       />
-      {!application ? (
+      {loading ? (
+        <div className="mt-10 rounded-2xl border border-[var(--line)] bg-white p-8 text-center text-sm text-[var(--text-muted)]" role="status">
+          신청 현황을 불러오는 중입니다…
+        </div>
+      ) : !application ? (
         <div className="mt-10">
           <EmptyState
             title="아직 가입 신청 내역이 없습니다."

@@ -124,3 +124,9 @@
 - 변경: `/google/callback`과 `/kakao/callback` 정적 라우트가 공통 콜백에 provider를 명시적으로 전달하도록 수정
 - 목적: Google OAuth 완료 후 Kakao 로그인 endpoint로 잘못 전송되는 fallback 방지
 - 검증: `npm.cmd run lint`, `npm.cmd run typecheck`, `git diff --check`
+
+### FE-014 — 신청 현황 인증 요청 클라이언트 전환
+
+- 상태: 완료
+- 변경: 신청 현황 페이지를 Client Component로 전환해 `localStorage.accessToken` 기반 `Authorization: Bearer` 헤더가 실제 API 요청에 포함되도록 수정
+- 검증: `npm.cmd run lint`, `npm.cmd run typecheck`, `git diff --check`
