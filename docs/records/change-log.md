@@ -20,7 +20,7 @@
 - 상태: 검증 중
 - API 단계: 실 API 기본, Mock 명시적 opt-in
 - 변경: `NEXT_PUBLIC_USE_VOLUNTEER_MOCKS=true`일 때만 Mock handler를 주입하도록 API request 경계를 변경했다.
-- 변경: Netlify production에 `https://server.dshelper.kr`와 Mock 비활성 설정을 명시했다.
+- 변경: 현재 Netlify 배포에 `https://be-test.dshelper.kr`와 Mock 비활성 설정을 명시했다. 운영 전환 시 API base URL을 변경한다.
 - 변경: 루트 layout을 request-time dynamic으로 지정해 API 데이터를 build 결과에 고정하지 않도록 했다.
 - 비범위: backend CORS·인증 서버 설정 변경.
 
