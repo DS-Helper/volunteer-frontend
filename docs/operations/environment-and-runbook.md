@@ -70,7 +70,7 @@ FE-013은 BE의 웹 OAuth 계약을 사용한다. 로그인 URL은 `GET /oauth/{
 ```text
 https://volunteer.dshelper.kr/kakao/callback
 https://volunteer.dshelper.kr/oauth/naver/callback
-https://volunteer.dshelper.kr/oauth/google/callback
+https://volunteer.dshelper.kr/google/callback
 ```
 
 BE 테스트 환경에는 다음 provider 설정이 필요하다.
@@ -85,7 +85,7 @@ NAVER_CLIENT_URI=https://volunteer.dshelper.kr
 NAVER_REDIRECT_URI=https://volunteer.dshelper.kr/oauth/naver/callback
 GOOGLE_CLIENT_ID
 GOOGLE_CLIENT_SECRET
-GOOGLE_REDIRECT_URI=https://volunteer.dshelper.kr/oauth/google/callback
+GOOGLE_REDIRECT_URI=https://volunteer.dshelper.kr/google/callback
 ```
 
 Provider 콘솔에도 동일한 redirect URI를 등록하고, BE CORS 허용 origin에 `https://volunteer.dshelper.kr`을 추가해야 한다. OAuth client secret은 프론트나 `NEXT_PUBLIC_*`에 저장하지 않는다.
