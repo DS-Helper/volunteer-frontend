@@ -21,7 +21,7 @@ export default function LoginPage() {
     setError(null)
     try {
       const redirectUri = provider === 'kakao'
-        ? `${window.location.origin}/oauth/kakao/callback`
+        ? `${window.location.origin}/kakao/callback`
         : undefined
       const url = await getOAuthLoginUrl(provider, redirectUri)
       window.location.assign(url)
