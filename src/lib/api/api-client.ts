@@ -11,6 +11,7 @@ const DEFAULT_ERROR_MESSAGE =
   '요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.'
 
 const ACCESS_TOKEN_STORAGE_KEY = 'accessToken'
+const inflightRequests = new Map<string, Promise<unknown>>()
 
 function getStoredAccessToken(): string | null {
   if (typeof window === 'undefined') return null
@@ -177,6 +178,28 @@ export class ApiClient {
   }
 
   async request<TResult, TBody = unknown>(
+    path: string,
+    options: ApiRequestOptions<TBody, TResult> = {},
+  ): Promise<TResult> {
+    const method = options.method?.toUpperCase() ?? 'GET'
+    const query = options.query ?? {}
+    const body = options.body
+    const key = `${method}:${path}:${JSON.stringify(query)}:${typeof body === 'string' ? body : typeof FormData !== 'undefined' && body instanceof FormData ? '[form-data]' : JSON.stringify(body ?? null)}`
+    if (!options.signal) {
+      const existing = inflightRequests.get(key)
+      if (existing) return existing as Promise<TResult>
+    }
+    const promise = this.requestInternal<TResult, TBody>(path, options)
+    if (!options.signal) {
+      inflightRequests.set(key, promise)
+      void promise.finally(() => {
+        if (inflightRequests.get(key) === promise) inflightRequests.delete(key)
+      })
+    }
+    return promise
+  }
+
+  private async requestInternal<TResult, TBody = unknown>(
     path: string,
     options: ApiRequestOptions<TBody, TResult> = {},
   ): Promise<TResult> {
