@@ -1,6 +1,6 @@
 'use client';
 
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { FeedbackBanner } from '@/components/common/feedback-banner';
 import { ConfirmModal } from '@/components/modal/confirm-modal';
@@ -11,6 +11,7 @@ import {
 } from '@/features/volunteer/api';
 import type { AdminVolunteerEvent } from '@/features/volunteer/types';
 import { isApiError } from '@/lib/errors';
+import { volunteerQueryKeys } from '@/features/volunteer/query-keys';
 
 type EventAdminAction = 'open' | 'close' | 'cancel';
 
@@ -18,6 +19,7 @@ export function AdminEventActions({ event }: { event: AdminVolunteerEvent }) {
   const [action, setAction] = useState<EventAdminAction | null>(null);
   const [reason, setReason] = useState('');
   const [result, setResult] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async (selected: EventAdminAction) => {
       if (selected === 'open') return openAdminVolunteerEvent(event.id);
@@ -26,6 +28,8 @@ export function AdminEventActions({ event }: { event: AdminVolunteerEvent }) {
       return cancelAdminVolunteerEvent(event.id, { reason: reason.trim() });
     },
     onSuccess: (_, selected) => {
+      void queryClient.invalidateQueries({ queryKey: volunteerQueryKeys.events() });
+      void queryClient.invalidateQueries({ queryKey: volunteerQueryKeys.event(event.id) });
       const label = selected === 'open' ? '모집을 시작했습니다.' : selected === 'close' ? '모집을 마감했습니다.' : '일정을 취소했습니다.';
       setResult({ type: 'success', message: label });
       setAction(null);

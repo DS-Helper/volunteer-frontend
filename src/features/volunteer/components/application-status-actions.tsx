@@ -1,6 +1,6 @@
 'use client';
 
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
 import { FeedbackBanner } from '@/components/common/feedback-banner';
@@ -8,6 +8,7 @@ import { ConfirmModal } from '@/components/modal/confirm-modal';
 import { cancelVolunteerApplication } from '@/features/volunteer/api';
 import type { VolunteerApplication } from '@/features/volunteer/types';
 import { isApiError } from '@/lib/errors';
+import { volunteerQueryKeys } from '@/features/volunteer/query-keys';
 
 export function ApplicationStatusActions({
   application,
@@ -17,6 +18,7 @@ export function ApplicationStatusActions({
   const [cancelOpen, setCancelOpen] = useState(false);
   const [canceled, setCanceled] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   const capabilities = canceled
     ? { canEdit: false, canCancel: false, canReapply: true }
     : application.capabilities;
@@ -24,6 +26,8 @@ export function ApplicationStatusActions({
   const cancelMutation = useMutation({
     mutationFn: () => cancelVolunteerApplication(String(application.id)),
     onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: volunteerQueryKeys.application() });
+      void queryClient.invalidateQueries({ queryKey: volunteerQueryKeys.my() });
       setCanceled(true);
       setCancelOpen(false);
     },

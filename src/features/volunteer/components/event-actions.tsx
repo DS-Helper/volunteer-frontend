@@ -14,6 +14,7 @@ import type { VolunteerEventListItem } from '@/features/volunteer/types';
 import { VOLUNTEER_API_ERROR_MESSAGE } from '@/features/volunteer/types';
 import { formatVolunteerDateTimeRange } from '@/lib/date';
 import { isApiError } from '@/lib/errors';
+import { volunteerQueryKeys } from '@/features/volunteer/query-keys';
 
 export function EventActions({
   event,
@@ -34,7 +35,7 @@ export function EventActions({
   });
 
   const participantQuery = useQuery({
-    queryKey: ['volunteer', 'events', event.id, 'participants'],
+    queryKey: volunteerQueryKeys.participants(event.id),
     queryFn: () => getVolunteerEventParticipants(String(event.id)),
     enabled: participantsOpen && event.capabilities.canViewParticipants,
     staleTime: 0,
@@ -57,8 +58,8 @@ export function EventActions({
         type: 'success',
         message: applied ? '봉사 참여 신청이 완료되었습니다.' : '봉사 참여가 취소되었습니다.',
       });
-      void queryClient.invalidateQueries({ queryKey: ['volunteer', 'events'] });
-      void queryClient.invalidateQueries({ queryKey: ['volunteer', 'my'] });
+      void queryClient.invalidateQueries({ queryKey: volunteerQueryKeys.events() });
+      void queryClient.invalidateQueries({ queryKey: volunteerQueryKeys.my() });
       setConfirmAction(null);
     },
     onError: (error) => {
