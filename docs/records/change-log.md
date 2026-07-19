@@ -31,6 +31,7 @@
 - 변경: 카카오·네이버·구글 login-url/callback 화면과 `localStorage` JWT 저장을 추가했다.
 - 변경: 공통 API Client가 브라우저 저장 access token을 `Authorization: Bearer` 헤더로 첨부한다.
 - 비범위: provider console·BE secret/CORS 설정 변경.
+- 변경: 배포 도메인을 `https://volunteer.dshelper.kr`로 전환해 OAuth callback·CORS 문서를 갱신했다.
 
 ### FE-009 — 출석 Enum 단일화
 
