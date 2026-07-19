@@ -1,4 +1,6 @@
-import type { Metadata } from 'next';
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { EmptyState } from '@/components/common/empty-state';
 import { PageHeading } from '@/components/common/page-heading';
@@ -12,20 +14,21 @@ import {
 } from '@/features/volunteer/types';
 import { formatVolunteerDate } from '@/lib/date';
 
-export const metadata: Metadata = { title: '관리자 · 봉사단원' };
-
-export default async function AdminVolunteerMembersPage({
-  searchParams,
-}: PageProps<'/admin/volunteer/members'>) {
-  const params = await searchParams;
-  const keyword = typeof params.keyword === 'string' ? params.keyword : undefined;
-  const status = typeof params.status === 'string' && params.status in VOLUNTEER_MEMBER_STATUS_LABEL
-    ? (params.status as VolunteerMemberStatus)
+export default function AdminVolunteerMembersPage() {
+  const [result, setResult] = useState<Awaited<ReturnType<typeof getAdminVolunteerMembers>> | null>(null);
+  const params = new URLSearchParams(typeof window === 'undefined' ? '' : window.location.search);
+  const keywordValue = params.get('keyword');
+  const statusValue = params.get('status');
+  const genderValue = params.get('gender');
+  const keyword = keywordValue || undefined;
+  const status = statusValue && statusValue in VOLUNTEER_MEMBER_STATUS_LABEL
+    ? (statusValue as VolunteerMemberStatus)
     : undefined;
-  const gender = typeof params.gender === 'string' && params.gender in VOLUNTEER_GENDER_LABEL
-    ? (params.gender as VolunteerGender)
+  const gender = genderValue && genderValue in VOLUNTEER_GENDER_LABEL
+    ? (genderValue as VolunteerGender)
     : undefined;
-  const result = await getAdminVolunteerMembers({ keyword, status, gender, page: 0, size: 20 });
+  useEffect(() => { void getAdminVolunteerMembers({ keyword, status, gender, page: 0, size: 20 }).then(setResult); }, [keyword, status, gender]);
+  if (!result) return <main className="mx-auto max-w-[1240px] px-5 py-20 text-center" role="status">단원 목록을 불러오는 중입니다…</main>;
 
   return (
     <div className="mx-auto w-full max-w-[1240px] px-5 py-10 sm:px-8 sm:py-14">

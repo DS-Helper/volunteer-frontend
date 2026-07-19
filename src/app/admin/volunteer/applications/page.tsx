@@ -1,4 +1,6 @@
-import type { Metadata } from 'next';
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { EmptyState } from '@/components/common/empty-state';
 import { PageHeading } from '@/components/common/page-heading';
@@ -10,8 +12,6 @@ import {
 } from '@/features/volunteer/types';
 import { formatVolunteerDateTime } from '@/lib/date';
 
-export const metadata: Metadata = { title: '관리자 · 가입 신청' };
-
 const statusTone = {
   PENDING: 'amber',
   APPROVED: 'green',
@@ -19,17 +19,21 @@ const statusTone = {
   CANCELED: 'gray',
 } as const;
 
-export default async function AdminVolunteerApplicationsPage({
-  searchParams,
-}: PageProps<'/admin/volunteer/applications'>) {
-  const params = await searchParams;
-  const name = typeof params.name === 'string' ? params.name : undefined;
-  const phone = typeof params.phone === 'string' ? params.phone : undefined;
-  const status = typeof params.status === 'string' && params.status in VOLUNTEER_APPLICATION_STATUS_LABEL
-    ? (params.status as VolunteerApplicationStatus)
+export default function AdminVolunteerApplicationsPage() {
+  const [result, setResult] = useState<Awaited<ReturnType<typeof getAdminVolunteerApplications>> | null>(null);
+  const params = new URLSearchParams(typeof window === 'undefined' ? '' : window.location.search);
+  const nameValue = params.get('name');
+  const phoneValue = params.get('phone');
+  const statusValue = params.get('status');
+  const name = nameValue || undefined;
+  const phone = phoneValue || undefined;
+  const status = statusValue && statusValue in VOLUNTEER_APPLICATION_STATUS_LABEL
+    ? (statusValue as VolunteerApplicationStatus)
     : undefined;
-  const page = typeof params.page === 'string' && Number(params.page) >= 0 ? Number(params.page) : 0;
-  const result = await getAdminVolunteerApplications({ name, phone, status, page, size: 20 });
+  const pageValue = params.get('page');
+  const page = pageValue && Number(pageValue) >= 0 ? Number(pageValue) : 0;
+  useEffect(() => { void getAdminVolunteerApplications({ name, phone, status, page, size: 20 }).then(setResult); }, [name, phone, status, page]);
+  if (!result) return <main className="mx-auto max-w-[1240px] px-5 py-20 text-center" role="status">신청 목록을 불러오는 중입니다…</main>;
 
   return (
     <div className="mx-auto w-full max-w-[1240px] px-5 py-10 sm:px-8 sm:py-14">
