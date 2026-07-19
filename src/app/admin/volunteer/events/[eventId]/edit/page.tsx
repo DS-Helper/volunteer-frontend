@@ -12,7 +12,7 @@ export default function EditAdminVolunteerEventPage() {
   const id = eventId;
   const [event, setEvent] = useState<Awaited<ReturnType<typeof getAdminVolunteerEvent>> | null>(null);
   const [error, setError] = useState(false);
-  useEffect(() => { void getAdminVolunteerEvent(id).then(setEvent).catch(() => setError(true)); }, [id]);
+  useEffect(() => { const controller = new AbortController(); void getAdminVolunteerEvent(id, controller.signal).then(setEvent).catch(() => setError(true)); return () => controller.abort(); }, [id]);
   if (error) return <main className="mx-auto max-w-[960px] px-5 py-20 text-center" role="alert">일정 정보를 불러오지 못했습니다.</main>;
   if (!event) return <main className="mx-auto max-w-[960px] px-5 py-20 text-center" role="status">일정 정보를 불러오는 중입니다…</main>;
   if (!event.capabilities.canEdit) return <main className="mx-auto max-w-[960px] px-5 py-20 text-center">수정할 수 없는 일정입니다.</main>;

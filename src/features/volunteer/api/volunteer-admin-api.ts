@@ -195,10 +195,12 @@ export function getAdminVolunteerEvents(
 
 export function getAdminVolunteerEvent(
   eventId: string | number,
+  signal?: AbortSignal,
 ): Promise<AdminVolunteerEvent> {
   return volunteerApiRequest(`${ADMIN_EVENTS_PATH}/${eventId}`, {
     cache: 'no-store',
     method: 'GET',
+    signal,
   })
 }
 
