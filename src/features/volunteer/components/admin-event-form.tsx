@@ -148,6 +148,7 @@ export function AdminEventForm({
       {submitError ? <FeedbackBanner variant="error">{submitError}</FeedbackBanner> : null}
       <p className="sr-only" aria-live="polite">{uploadStatus === 'uploading' ? `이미지를 업로드하는 중입니다. ${uploadProgress}%` : uploadStatus === 'failed' ? '이미지 업로드에 실패했습니다. 다시 시도해 주세요.' : ''}</p>
       {uploadStatus === 'uploading' ? <progress className="mt-3 h-2 w-full" max={100} value={uploadProgress} aria-label="이미지 업로드 진행률" /> : null}
+      {uploadStatus === 'failed' ? <button type="submit" disabled={isSubmitting} className="mt-3 rounded-xl border border-[#e8c5c5] px-4 py-2 text-sm font-bold text-[var(--danger)]">이미지 업로드 다시 시도</button> : null}
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="sm:col-span-2">
