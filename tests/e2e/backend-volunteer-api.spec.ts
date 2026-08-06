@@ -14,6 +14,14 @@ function bearer(token: string) {
   return { Authorization: `Bearer ${token}` };
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function responseData(body: unknown): unknown {
+  return isRecord(body) && 'data' in body ? body.data : body;
+}
+
 test.describe('실제 백엔드 봉사 API 인증 계약', () => {
   test.skip(!enabled, 'E2E_RUN_REAL_BACKEND=true 및 사용자·관리자 토큰이 필요합니다.');
 
@@ -25,7 +33,8 @@ test.describe('실제 백엔드 봉사 API 인증 계약', () => {
     expect(response.ok()).toBeTruthy();
     expect(response.headers()['content-type']).toContain('application/json');
     const body: unknown = await response.json();
-    expect(body).toBeTruthy();
+    const data = responseData(body);
+    if (!isRecord(data)) throw new Error('사용자 요약 응답 data가 객체가 아닙니다.');
   });
 
   test('관리자 인증으로 신청 목록 페이지를 조회한다', async ({ request }) => {
@@ -35,7 +44,10 @@ test.describe('실제 백엔드 봉사 API 인증 계약', () => {
 
     expect(response.ok()).toBeTruthy();
     const body: unknown = await response.json();
-    expect(body).toBeTruthy();
+    const data = responseData(body);
+    if (!isRecord(data)) throw new Error('관리자 신청 목록 응답 data가 객체가 아닙니다.');
+    expect(Array.isArray(data.content)).toBeTruthy();
+    expect(isRecord(data.page)).toBeTruthy();
   });
 
   test('명시적으로 선택한 관리자 mutation 계약을 검증한다', async ({ request }) => {
@@ -48,6 +60,9 @@ test.describe('실제 백엔드 봉사 API 인증 계약', () => {
         { headers: bearer(adminToken!) },
       );
       expect(response.ok()).toBeTruthy();
+      expect(response.headers()['content-type']).toContain('application/json');
+      const body: unknown = await response.json();
+      expect(body).toBeTruthy();
       return;
     }
 
@@ -61,7 +76,12 @@ test.describe('실제 백엔드 봉사 API 인증 계약', () => {
       });
       expect(response.ok()).toBeTruthy();
       const body: unknown = await response.json();
-      expect(body).toBeTruthy();
+      const data = responseData(body);
+      if (!isRecord(data)) throw new Error('출석 응답 data가 객체가 아닙니다.');
+      expect(data.eventId).toBe(eventId);
+      expect(typeof data.attendedCount).toBe('number');
+      expect(typeof data.absentCount).toBe('number');
+      expect(typeof data.processedAt).toBe('string');
       return;
     }
 
