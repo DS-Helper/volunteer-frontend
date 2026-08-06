@@ -57,12 +57,19 @@ test.describe('실제 백엔드 봉사 API 인증 계약', () => {
       expect(applicationId, 'E2E_APPLICATION_ID가 필요합니다.').toBeTruthy();
       const response = await request.post(
         `${backendBaseUrl}/api/v1/admin/volunteer/applications/${applicationId}/${mutation}`,
-        { headers: bearer(adminToken!) },
+        {
+          headers: { ...bearer(adminToken!), 'Content-Type': 'application/json' },
+          ...(mutation === 'reject'
+            ? { data: { rejectionReason: process.env.E2E_REJECTION_REASON ?? 'E2E 계약 검증용 반려' } }
+            : {}),
+        },
       );
       expect(response.ok()).toBeTruthy();
       expect(response.headers()['content-type']).toContain('application/json');
       const body: unknown = await response.json();
-      expect(body).toBeTruthy();
+      const data = responseData(body);
+      if (!isRecord(data)) throw new Error(`${mutation} 응답 data가 객체가 아닙니다.`);
+      expect(data.id).toBe(applicationId);
       return;
     }
 
