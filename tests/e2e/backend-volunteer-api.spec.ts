@@ -8,7 +8,8 @@ const mutation = process.env.E2E_ADMIN_MUTATION;
 const applicationId = process.env.E2E_APPLICATION_ID;
 const eventId = process.env.E2E_EVENT_ID;
 
-const enabled = runRealBackend && Boolean(userToken && adminToken);
+const userEnabled = runRealBackend && Boolean(userToken);
+const adminEnabled = runRealBackend && Boolean(adminToken);
 
 function bearer(token: string) {
   return { Authorization: `Bearer ${token}` };
@@ -23,9 +24,8 @@ function responseData(body: unknown): unknown {
 }
 
 test.describe('실제 백엔드 봉사 API 인증 계약', () => {
-  test.skip(!enabled, 'E2E_RUN_REAL_BACKEND=true 및 사용자·관리자 토큰이 필요합니다.');
-
   test('사용자 인증으로 내 봉사 요약을 조회한다', async ({ request }) => {
+    test.skip(!userEnabled, 'E2E_RUN_REAL_BACKEND=true 및 사용자 토큰이 필요합니다.');
     const response = await request.get(`${backendBaseUrl}/api/v1/volunteer-members/me/summary`, {
       headers: bearer(userToken!),
     });
@@ -38,6 +38,7 @@ test.describe('실제 백엔드 봉사 API 인증 계약', () => {
   });
 
   test('관리자 인증으로 신청 목록 페이지를 조회한다', async ({ request }) => {
+    test.skip(!adminEnabled, 'E2E_RUN_REAL_BACKEND=true 및 관리자 토큰이 필요합니다.');
     const response = await request.get(`${backendBaseUrl}/api/v1/admin/volunteer/applications?page=0&size=1`, {
       headers: bearer(adminToken!),
     });
@@ -51,6 +52,7 @@ test.describe('실제 백엔드 봉사 API 인증 계약', () => {
   });
 
   test('명시적으로 선택한 관리자 mutation 계약을 검증한다', async ({ request }) => {
+    test.skip(!adminEnabled, 'E2E_RUN_REAL_BACKEND=true 및 관리자 토큰이 필요합니다.');
     test.skip(process.env.E2E_ADMIN_MUTATE !== 'true', 'E2E_ADMIN_MUTATE=true일 때만 상태 변경을 실행합니다.');
 
     if (mutation === 'approve' || mutation === 'reject') {
