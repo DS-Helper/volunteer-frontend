@@ -1,0 +1,46 @@
+name: Backend volunteer authenticated E2E
+
+on:
+  workflow_dispatch:
+    inputs:
+      mutation:
+        description: 'Optional mutation to verify'
+        required: false
+        default: ''
+        type: choice
+        options:
+          - ''
+          - approve
+          - reject
+          - attendance
+      application_id:
+        description: 'Application ID for approve/reject'
+        required: false
+        type: string
+      event_id:
+        description: 'Event ID for attendance'
+        required: false
+        type: string
+
+jobs:
+  authenticated-e2e:
+    runs-on: ubuntu-latest
+    env:
+      E2E_RUN_REAL_BACKEND: 'true'
+      E2E_ADMIN_MUTATE: ${{ inputs.mutation != '' && 'true' || 'false' }}
+      E2E_ADMIN_MUTATION: ${{ inputs.mutation }}
+      E2E_APPLICATION_ID: ${{ inputs.application_id }}
+      E2E_EVENT_ID: ${{ inputs.event_id }}
+      E2E_USER_ACCESS_TOKEN: ${{ secrets.E2E_USER_ACCESS_TOKEN }}
+      E2E_ADMIN_ACCESS_TOKEN: ${{ secrets.E2E_ADMIN_ACCESS_TOKEN }}
+      E2E_ATTENDED_PARTICIPATION_IDS: ${{ secrets.E2E_ATTENDED_PARTICIPATION_IDS }}
+      E2E_ABSENT_PARTICIPATION_IDS: ${{ secrets.E2E_ABSENT_PARTICIPATION_IDS }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e:backend

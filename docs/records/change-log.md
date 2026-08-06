@@ -151,3 +151,8 @@
 - 변경: 사용자 요약 조회와 관리자 신청 목록의 Bearer 인증 계약을 실제 `be-test.dshelper.kr` 대상으로 검증하는 Playwright API 테스트 추가
 - 변경: 승인·반려·출석 mutation은 명시적 환경변수와 대상 ID가 있을 때만 실행
 - 제외: 토큰·운영 데이터의 저장 및 기본 CI에서의 실서버 mutation 실행
+
+### FE-019 — 수동 실서버 E2E workflow
+
+- 상태: 완료
+- 변경: GitHub Actions 수동 실행 workflow에서 repository secrets와 테스트 대상 ID를 주입해 실제 백엔드 인증 E2E를 재현

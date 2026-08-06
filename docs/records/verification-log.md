@@ -180,3 +180,10 @@
 |---|---|---|---|
 | 실제 백엔드 E2E 기본 실행 | `npm.cmd run test:e2e:backend` | 조건부 건너뜀 | `E2E_RUN_REAL_BACKEND`와 토큰 미설정 시 실서버를 호출하지 않음 |
 | mutation 안전장치 | 코드 검토 | 통과 | `E2E_ADMIN_MUTATE=true`일 때만 승인·반려·출석 실행 |
+
+### FE-019
+
+| 검증 항목 | 방식 | 결과 | 비고 |
+|---|---|---|---|
+| 실서버 연결성 | `GET https://be-test.dshelper.kr/api/v1/volunteer-events` | 확인 | 무토큰 요청이 `401`을 반환해 서버 및 인증 경계 응답 확인 |
+| 수동 workflow 정적 검토 | YAML 및 secret 참조 검토 | 통과 | 기본 push/PR workflow와 분리, 토큰을 로그에 출력하지 않음 |

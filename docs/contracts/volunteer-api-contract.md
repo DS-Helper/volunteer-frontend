@@ -34,4 +34,6 @@ E2E_RUN_REAL_BACKEND=true E2E_USER_ACCESS_TOKEN=... E2E_ADMIN_ACCESS_TOKEN=... n
 
 승인·반려·출석처럼 상태를 변경하는 테스트는 `E2E_ADMIN_MUTATE=true`와 `E2E_ADMIN_MUTATION=approve|reject|attendance`를 함께 지정해야 한다. 대상 ID와 출석 참여 ID도 별도로 주입해야 하며, 기본 CI와 일반 E2E에는 mutation이 실행되지 않는다.
 
+GitHub Actions의 `Backend volunteer authenticated E2E` 수동 workflow에서도 동일한 테스트를 실행할 수 있다. 토큰은 repository secret으로만 등록하고, mutation 실행 시 테스트용 신청·일정 ID를 workflow input으로 지정한다.
+
 OAuth redirect URI와 환경변수는 `docs/README.md` 및 프로젝트 `.env.example`을 함께 갱신한다.
