@@ -24,4 +24,14 @@ npm run contract:check
 
 `OPENAPI_URL`을 설정하면 CI가 사용자·관리자 필수 path와 HTTP method를 실제 OpenAPI 문서와 비교한다.
 
+## 실제 백엔드 인증 E2E
+
+실서버 호출은 기본적으로 건너뛴다. 만료되지 않은 사용자·관리자 access token을 환경변수로 주입하고 다음처럼 명시적으로 활성화한다.
+
+```bash
+E2E_RUN_REAL_BACKEND=true E2E_USER_ACCESS_TOKEN=... E2E_ADMIN_ACCESS_TOKEN=... npm run test:e2e:backend
+```
+
+승인·반려·출석처럼 상태를 변경하는 테스트는 `E2E_ADMIN_MUTATE=true`와 `E2E_ADMIN_MUTATION=approve|reject|attendance`를 함께 지정해야 한다. 대상 ID와 출석 참여 ID도 별도로 주입해야 하며, 기본 CI와 일반 E2E에는 mutation이 실행되지 않는다.
+
 OAuth redirect URI와 환경변수는 `docs/README.md` 및 프로젝트 `.env.example`을 함께 갱신한다.

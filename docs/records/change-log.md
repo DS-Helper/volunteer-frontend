@@ -144,3 +144,10 @@
 - 상태: 진행 중
 - 변경: API 요청 deduplication, 공통 오류/403 UI, React Query key·무효화, 관리자 신청 페이지네이션, 일정 이미지 업로드 상태 및 이탈 경고
 - 검증: `npm.cmd run lint`, `npm.cmd run typecheck`
+
+### FE-018 — 실제 백엔드 인증 E2E 하네스
+
+- 상태: 완료
+- 변경: 사용자 요약 조회와 관리자 신청 목록의 Bearer 인증 계약을 실제 `be-test.dshelper.kr` 대상으로 검증하는 Playwright API 테스트 추가
+- 변경: 승인·반려·출석 mutation은 명시적 환경변수와 대상 ID가 있을 때만 실행
+- 제외: 토큰·운영 데이터의 저장 및 기본 CI에서의 실서버 mutation 실행

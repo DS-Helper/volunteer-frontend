@@ -173,3 +173,10 @@
 | 관리자 로딩·오류 상태 | 코드 검토 | 통과 | 주요 조회 화면에 `role=status`/`role=alert` 추가 |
 | `npm.cmd run lint` | ESLint | 통과 | 오류·경고 없음 |
 | `npm.cmd run typecheck` | Next typegen + TypeScript | 통과 | 타입 오류 없음 |
+
+### FE-018
+
+| 검증 항목 | 방식 | 결과 | 비고 |
+|---|---|---|---|
+| 실제 백엔드 E2E 기본 실행 | `npm.cmd run test:e2e:backend` | 조건부 건너뜀 | `E2E_RUN_REAL_BACKEND`와 토큰 미설정 시 실서버를 호출하지 않음 |
+| mutation 안전장치 | 코드 검토 | 통과 | `E2E_ADMIN_MUTATE=true`일 때만 승인·반려·출석 실행 |
