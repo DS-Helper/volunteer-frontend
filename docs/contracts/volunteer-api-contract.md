@@ -36,4 +36,6 @@ E2E_RUN_REAL_BACKEND=true E2E_USER_ACCESS_TOKEN=... E2E_ADMIN_ACCESS_TOKEN=... n
 
 GitHub Actions의 `Backend volunteer authenticated E2E` 수동 workflow에서도 동일한 테스트를 실행할 수 있다. 토큰은 repository secret으로만 등록하고, mutation 실행 시 테스트용 신청·일정 ID를 workflow input으로 지정한다.
 
+테스트용 데이터가 별도로 고정되지 않은 환경에서는 `E2E_AUTO_SELECT_TARGET=true`를 사용해 관리자 목록에서 대상을 선택할 수 있다. mutation 자체는 여전히 `E2E_ADMIN_MUTATE=true`일 때만 실행된다.
+
 OAuth redirect URI와 환경변수는 `docs/README.md` 및 프로젝트 `.env.example`을 함께 갱신한다.

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type APIRequestContext } from '@playwright/test';
 
 const backendBaseUrl = (process.env.E2E_BACKEND_API_BASE_URL ?? 'https://be-test.dshelper.kr').replace(/\/$/, '');
 const userToken = process.env.E2E_USER_ACCESS_TOKEN;
@@ -7,6 +7,7 @@ const runRealBackend = process.env.E2E_RUN_REAL_BACKEND === 'true';
 const mutation = process.env.E2E_ADMIN_MUTATION;
 const applicationId = process.env.E2E_APPLICATION_ID;
 const eventId = process.env.E2E_EVENT_ID;
+const autoSelectTarget = process.env.E2E_AUTO_SELECT_TARGET === 'true';
 
 const userEnabled = runRealBackend && Boolean(userToken);
 const adminEnabled = runRealBackend && Boolean(adminToken);
@@ -21,6 +22,46 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function responseData(body: unknown): unknown {
   return isRecord(body) && 'data' in body ? body.data : body;
+}
+
+async function findPendingApplicationId(request: APIRequestContext) {
+  const response = await request.get(`${backendBaseUrl}/api/v1/admin/volunteer/applications?status=PENDING&page=0&size=1`, {
+    headers: bearer(adminToken!),
+  });
+  expect(response.ok()).toBeTruthy();
+  const data = responseData(await response.json());
+  if (!isRecord(data) || !Array.isArray(data.content) || !isRecord(data.content[0])) {
+    throw new Error('PENDING 신청을 자동 선택할 수 없습니다.');
+  }
+  const id = data.content[0].id;
+  if (typeof id !== 'string') throw new Error('신청 응답의 id가 없습니다.');
+  return id;
+}
+
+async function findEventId(request: APIRequestContext): Promise<string> {
+  const response = await request.get(`${backendBaseUrl}/api/v1/admin/volunteer/events?page=0&size=1`, {
+    headers: bearer(adminToken!),
+  });
+  expect(response.ok()).toBeTruthy();
+  const data = responseData(await response.json());
+  if (!isRecord(data) || !Array.isArray(data.content) || !isRecord(data.content[0])) {
+    throw new Error('일정을 자동 선택할 수 없습니다.');
+  }
+  const id = data.content[0].id;
+  if (typeof id !== 'string') throw new Error('일정 응답의 id가 없습니다.');
+  return id;
+}
+
+async function findParticipationIds(request: APIRequestContext, targetEventId: string): Promise<string[]> {
+  const response = await request.get(`${backendBaseUrl}/api/v1/admin/volunteer/events/${targetEventId}/participations`, {
+    headers: bearer(adminToken!),
+  });
+  expect(response.ok()).toBeTruthy();
+  const data = responseData(await response.json());
+  if (!isRecord(data) || !Array.isArray(data.participations)) throw new Error('참여자 목록을 자동 선택할 수 없습니다.');
+  const id = data.participations.find((item): item is Record<string, unknown> => isRecord(item) && typeof item.participationId === 'string')?.participationId;
+  if (!id) throw new Error('출석 처리할 참여자가 없습니다.');
+  return [String(id)];
 }
 
 test.describe('실제 백엔드 봉사 API 인증 계약', () => {
@@ -56,9 +97,10 @@ test.describe('실제 백엔드 봉사 API 인증 계약', () => {
     test.skip(process.env.E2E_ADMIN_MUTATE !== 'true', 'E2E_ADMIN_MUTATE=true일 때만 상태 변경을 실행합니다.');
 
     if (mutation === 'approve' || mutation === 'reject') {
-      expect(applicationId, 'E2E_APPLICATION_ID가 필요합니다.').toBeTruthy();
+      const targetApplicationId = applicationId ?? (autoSelectTarget ? await findPendingApplicationId(request) : undefined);
+      expect(targetApplicationId, 'E2E_APPLICATION_ID 또는 E2E_AUTO_SELECT_TARGET=true가 필요합니다.').toBeTruthy();
       const response = await request.post(
-        `${backendBaseUrl}/api/v1/admin/volunteer/applications/${applicationId}/${mutation}`,
+        `${backendBaseUrl}/api/v1/admin/volunteer/applications/${targetApplicationId}/${mutation}`,
         {
           headers: { ...bearer(adminToken!), 'Content-Type': 'application/json' },
           ...(mutation === 'reject'
@@ -71,15 +113,18 @@ test.describe('실제 백엔드 봉사 API 인증 계약', () => {
       const body: unknown = await response.json();
       const data = responseData(body);
       if (!isRecord(data)) throw new Error(`${mutation} 응답 data가 객체가 아닙니다.`);
-      expect(data.id).toBe(applicationId);
+      expect(data.id).toBe(targetApplicationId);
       return;
     }
 
     if (mutation === 'attendance') {
-      expect(eventId, 'E2E_EVENT_ID가 필요합니다.').toBeTruthy();
+      const targetEventId: string | undefined = eventId ?? (autoSelectTarget ? await findEventId(request) : undefined);
+      if (!targetEventId) throw new Error('E2E_EVENT_ID 또는 E2E_AUTO_SELECT_TARGET=true가 필요합니다.');
       const attended = (process.env.E2E_ATTENDED_PARTICIPATION_IDS ?? '').split(',').map((id) => id.trim()).filter(Boolean);
       const absent = (process.env.E2E_ABSENT_PARTICIPATION_IDS ?? '').split(',').map((id) => id.trim()).filter(Boolean);
-      const response = await request.post(`${backendBaseUrl}/api/v1/admin/volunteer/events/${eventId}/attendance`, {
+      if (autoSelectTarget && attended.length + absent.length === 0) attended.push(...await findParticipationIds(request, targetEventId));
+      expect(attended.length + absent.length).toBeGreaterThan(0);
+      const response = await request.post(`${backendBaseUrl}/api/v1/admin/volunteer/events/${targetEventId}/attendance`, {
         headers: { ...bearer(adminToken!), 'Content-Type': 'application/json' },
         data: { attendedParticipationIds: attended, absentParticipationIds: absent },
       });
@@ -87,7 +132,7 @@ test.describe('실제 백엔드 봉사 API 인증 계약', () => {
       const body: unknown = await response.json();
       const data = responseData(body);
       if (!isRecord(data)) throw new Error('출석 응답 data가 객체가 아닙니다.');
-      expect(data.eventId).toBe(eventId);
+      expect(data.eventId).toBe(targetEventId);
       expect(typeof data.attendedCount).toBe('number');
       expect(typeof data.absentCount).toBe('number');
       expect(typeof data.processedAt).toBe('string');
