@@ -28,6 +28,8 @@ npm run contract:check
 
 실서버 호출은 기본적으로 건너뛴다. 만료되지 않은 사용자·관리자 access token을 환경변수로 주입하고 다음처럼 명시적으로 활성화한다.
 
+사용자 BE와 관리자 BE가 서로 다른 호스트로 배포된 경우 `E2E_BACKEND_API_BASE_URL`과 `E2E_ADMIN_API_BASE_URL`을 각각 지정한다. 관리자 경로가 없는 호스트를 지정하면 조회가 `404 RESOURCE_NOT_FOUND`로 실패한다.
+
 ```bash
 E2E_RUN_REAL_BACKEND=true E2E_USER_ACCESS_TOKEN=... E2E_ADMIN_ACCESS_TOKEN=... npm run test:e2e:backend
 ```

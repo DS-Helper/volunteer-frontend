@@ -1,6 +1,7 @@
 import { expect, test, type APIRequestContext } from '@playwright/test';
 
 const backendBaseUrl = (process.env.E2E_BACKEND_API_BASE_URL ?? 'https://be-test.dshelper.kr').replace(/\/$/, '');
+const adminBaseUrl = (process.env.E2E_ADMIN_API_BASE_URL ?? backendBaseUrl).replace(/\/$/, '');
 const userToken = process.env.E2E_USER_ACCESS_TOKEN;
 const adminToken = process.env.E2E_ADMIN_ACCESS_TOKEN;
 const runRealBackend = process.env.E2E_RUN_REAL_BACKEND === 'true';
@@ -25,7 +26,7 @@ function responseData(body: unknown): unknown {
 }
 
 async function findPendingApplicationId(request: APIRequestContext) {
-  const response = await request.get(`${backendBaseUrl}/api/v1/admin/volunteer/applications?status=PENDING&page=0&size=1`, {
+  const response = await request.get(`${adminBaseUrl}/api/v1/admin/volunteer/applications?status=PENDING&page=0&size=1`, {
     headers: bearer(adminToken!),
   });
   expect(response.ok()).toBeTruthy();
@@ -39,7 +40,7 @@ async function findPendingApplicationId(request: APIRequestContext) {
 }
 
 async function findEventId(request: APIRequestContext): Promise<string> {
-  const response = await request.get(`${backendBaseUrl}/api/v1/admin/volunteer/events?page=0&size=1`, {
+  const response = await request.get(`${adminBaseUrl}/api/v1/admin/volunteer/events?page=0&size=1`, {
     headers: bearer(adminToken!),
   });
   expect(response.ok()).toBeTruthy();
@@ -53,7 +54,7 @@ async function findEventId(request: APIRequestContext): Promise<string> {
 }
 
 async function findParticipationIds(request: APIRequestContext, targetEventId: string): Promise<string[]> {
-  const response = await request.get(`${backendBaseUrl}/api/v1/admin/volunteer/events/${targetEventId}/participations`, {
+  const response = await request.get(`${adminBaseUrl}/api/v1/admin/volunteer/events/${targetEventId}/participations`, {
     headers: bearer(adminToken!),
   });
   expect(response.ok()).toBeTruthy();
@@ -71,7 +72,7 @@ test.describe('실제 백엔드 봉사 API 인증 계약', () => {
       headers: bearer(userToken!),
     });
 
-    expect(response.ok()).toBeTruthy();
+    expect(response.ok(), `사용자 API ${response.status()} 응답: ${(await response.text()).slice(0, 300)}`).toBeTruthy();
     expect(response.headers()['content-type']).toContain('application/json');
     const body: unknown = await response.json();
     const data = responseData(body);
@@ -80,11 +81,11 @@ test.describe('실제 백엔드 봉사 API 인증 계약', () => {
 
   test('관리자 인증으로 신청 목록 페이지를 조회한다', async ({ request }) => {
     test.skip(!adminEnabled, 'E2E_RUN_REAL_BACKEND=true 및 관리자 토큰이 필요합니다.');
-    const response = await request.get(`${backendBaseUrl}/api/v1/admin/volunteer/applications?page=0&size=1`, {
+    const response = await request.get(`${adminBaseUrl}/api/v1/admin/volunteer/applications?page=0&size=1`, {
       headers: bearer(adminToken!),
     });
 
-    expect(response.ok()).toBeTruthy();
+    expect(response.ok(), `관리자 API ${response.status()} 응답: ${(await response.text()).slice(0, 300)}`).toBeTruthy();
     const body: unknown = await response.json();
     const data = responseData(body);
     if (!isRecord(data)) throw new Error('관리자 신청 목록 응답 data가 객체가 아닙니다.');
@@ -100,7 +101,7 @@ test.describe('실제 백엔드 봉사 API 인증 계약', () => {
       const targetApplicationId = applicationId ?? (autoSelectTarget ? await findPendingApplicationId(request) : undefined);
       expect(targetApplicationId, 'E2E_APPLICATION_ID 또는 E2E_AUTO_SELECT_TARGET=true가 필요합니다.').toBeTruthy();
       const response = await request.post(
-        `${backendBaseUrl}/api/v1/admin/volunteer/applications/${targetApplicationId}/${mutation}`,
+        `${adminBaseUrl}/api/v1/admin/volunteer/applications/${targetApplicationId}/${mutation}`,
         {
           headers: { ...bearer(adminToken!), 'Content-Type': 'application/json' },
           ...(mutation === 'reject'
@@ -124,7 +125,7 @@ test.describe('실제 백엔드 봉사 API 인증 계약', () => {
       const absent = (process.env.E2E_ABSENT_PARTICIPATION_IDS ?? '').split(',').map((id) => id.trim()).filter(Boolean);
       if (autoSelectTarget && attended.length + absent.length === 0) attended.push(...await findParticipationIds(request, targetEventId));
       expect(attended.length + absent.length).toBeGreaterThan(0);
-      const response = await request.post(`${backendBaseUrl}/api/v1/admin/volunteer/events/${targetEventId}/attendance`, {
+      const response = await request.post(`${adminBaseUrl}/api/v1/admin/volunteer/events/${targetEventId}/attendance`, {
         headers: { ...bearer(adminToken!), 'Content-Type': 'application/json' },
         data: { attendedParticipationIds: attended, absentParticipationIds: absent },
       });
