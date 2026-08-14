@@ -26,13 +26,15 @@ npm run contract:check
 
 ## 실제 백엔드 인증 E2E
 
-실서버 호출은 기본적으로 건너뛴다. 만료되지 않은 사용자·관리자 access token을 환경변수로 주입하고 다음처럼 명시적으로 활성화한다.
+실서버 호출은 기본적으로 건너뛴다. 활성화하면 기본적으로 DSHelper(BE) test 브랜치의 `GET /test/temp-token`을 호출해 임시 관리자 access token을 발급받는다. 사용자 토큰만 환경변수로 주입하면 된다.
 
 사용자 BE와 관리자 BE가 서로 다른 호스트로 배포된 경우 `E2E_BACKEND_API_BASE_URL`과 `E2E_ADMIN_API_BASE_URL`을 각각 지정한다. 관리자 경로가 없는 호스트를 지정하면 조회가 `404 RESOURCE_NOT_FOUND`로 실패한다.
 
 ```bash
-E2E_RUN_REAL_BACKEND=true E2E_USER_ACCESS_TOKEN=... E2E_ADMIN_ACCESS_TOKEN=... npm run test:e2e:backend
+E2E_RUN_REAL_BACKEND=true E2E_USER_ACCESS_TOKEN=... npm run test:e2e:backend
 ```
+
+관리자 토큰 발급 API를 바꿔야 하는 환경에서는 `E2E_ADMIN_TOKEN_URL`을 지정한다. `E2E_ADMIN_ACCESS_TOKEN`은 발급 API를 사용할 수 없는 예외적인 경우의 override다.
 
 승인·반려·출석처럼 상태를 변경하는 테스트는 `E2E_ADMIN_MUTATE=true`와 `E2E_ADMIN_MUTATION=approve|reject|attendance`를 함께 지정해야 한다. 대상 ID와 출석 참여 ID도 별도로 주입해야 하며, 기본 CI와 일반 E2E에는 mutation이 실행되지 않는다.
 
