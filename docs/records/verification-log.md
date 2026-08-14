@@ -187,3 +187,10 @@
 |---|---|---|---|
 | 실서버 연결성 | `GET https://be-test.dshelper.kr/api/v1/volunteer-events` | 확인 | 무토큰 요청이 `401`을 반환해 서버 및 인증 경계 응답 확인 |
 | 수동 workflow 정적 검토 | YAML 및 secret 참조 검토 | 통과 | 기본 push/PR workflow와 분리, 토큰을 로그에 출력하지 않음 |
+
+### FE-020
+
+| 검증 항목 | 방식 | 결과 | 비고 |
+|---|---|---|---|
+| 임시 관리자 토큰 발급 API | `GET https://be-test.dshelper.kr/test/temp-token` | 실패(500) | 배포된 Test 도메인에서 `INTERNAL_SERVER_ERROR`; 프론트는 해당 API를 기본 토큰 공급자로 사용하도록 변경 |
+| 토큰 공급자 E2E 코드 | Playwright API fixture 코드 검토 및 typecheck/lint | 통과 | 토큰을 파일·로그에 저장하지 않고 요청 시 발급·메모리 사용 |
