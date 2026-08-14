@@ -12,3 +12,5 @@ npm run dev
 ```
 
 백엔드 없이 확인하려면 `.env.example`을 참고해 Mock 환경변수를 설정합니다. 상세 실행 및 검증 절차는 `docs/operations/environment-and-runbook.md`를 따릅니다.
+
+구조 규칙은 [`AGENTS.md`](./AGENTS.md), 문서 라우팅은 [`docs/README.md`](./docs/README.md)를 기준으로 합니다. 문서 고립 여부는 `npm run docs:check`로 검증합니다.

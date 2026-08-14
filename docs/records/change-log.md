@@ -156,3 +156,8 @@
 
 - 상태: 완료
 - 변경: GitHub Actions 수동 실행 workflow에서 repository secrets와 테스트 대상 ID를 주입해 실제 백엔드 인증 E2E를 재현
+
+### FE-021 — 코드·문서 구조 검증
+
+- 상태: 완료
+- 변경: 코드/문서 책임 경계 문서 추가, `docs:check`로 `docs/README.md`에 연결되지 않은 문서 탐지, 루트 실행 안내와 현재 상태 문서를 최신 구조로 동기화

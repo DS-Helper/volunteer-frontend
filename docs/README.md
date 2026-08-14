@@ -38,6 +38,7 @@
 | [API 계약과 오류](architecture/api-contract-and-errors.md) | 진행 중 | DTO·Enum·오류·endpoint 변경 |
 | [데이터·캐시·무효화](architecture/data-cache-and-invalidation.md) | 검증 중 | 캐시·Query key·재조회 변경 |
 | [보안과 개인정보](architecture/security-and-privacy.md) | 검증 중 | 인증·권한·개인정보 변경 |
+| [코드·문서 구조](architecture/code-organization.md) | 진행 중 | 소스 경계·문서 라우팅·테스트 배치 변경 |
 
 ### 전달 계획
 
@@ -90,6 +91,7 @@
 ## 작업 기록 절차
 
 - [봉사 API 계약 및 smoke check](contracts/volunteer-api-contract.md)
+- 구조 변경 후 `npm run docs:check`를 실행해 고립 문서가 없는지 확인한다.
 
 - [ ] 작업 ID와 관련 문서를 정한다.
 - [ ] 구현 전에 요구사항 절, 범위, 비범위, 완료 조건을 기록한다.

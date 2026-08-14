@@ -12,8 +12,9 @@
     "test:run": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:backend": "playwright test tests/e2e/backend-volunteer-api.spec.ts --project=chromium",
-    "test:e2e:ui": "playwright test --ui"
-    ,"contract:check": "node scripts/verify-api-contract.mjs"
+    "test:e2e:ui": "playwright test --ui",
+    "contract:check": "node scripts/verify-api-contract.mjs",
+    "docs:check": "node scripts/verify-doc-links.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
