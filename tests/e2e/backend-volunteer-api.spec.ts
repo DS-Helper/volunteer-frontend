@@ -30,7 +30,7 @@ function responseData(body: unknown): unknown {
 async function getAdminToken(request: APIRequestContext): Promise<string> {
   if (configuredAdminToken) return configuredAdminToken;
   if (fetchedAdminToken) return fetchedAdminToken;
-  const response = await request.get(adminTokenUrl);
+  const response = await request.post(adminTokenUrl);
   expect(response.ok(), `임시 관리자 토큰 API ${response.status()} 응답`).toBeTruthy();
   const body: unknown = await response.json();
   const data = responseData(body);

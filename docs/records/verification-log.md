@@ -192,7 +192,7 @@
 
 | 검증 항목 | 방식 | 결과 | 비고 |
 |---|---|---|---|
-| 임시 관리자 토큰 발급 API | `GET https://be-test.dshelper.kr/test/temp-token` | 실패(500) | 배포된 Test 도메인에서 `INTERNAL_SERVER_ERROR`; 프론트는 해당 API를 기본 토큰 공급자로 사용하도록 변경 |
+| 임시 관리자 토큰 발급 API | `POST https://be-test.dshelper.kr/test/temp-token` | 재검증 필요 | DSHelper(BE) test 브랜치 Controller 매핑이 POST임을 소스에서 확인; 배포 응답은 다음 실 API 실행에서 확인 |
 | 토큰 공급자 E2E 코드 | Playwright API fixture 코드 검토 및 typecheck/lint | 통과 | 토큰을 파일·로그에 저장하지 않고 요청 시 발급·메모리 사용 |
 
 ### FE-021

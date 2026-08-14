@@ -26,7 +26,7 @@ npm run contract:check
 
 ## 실제 백엔드 인증 E2E
 
-실서버 호출은 기본적으로 건너뛴다. 활성화하면 기본적으로 DSHelper(BE) test 브랜치의 `GET /test/temp-token`을 호출해 임시 관리자 access token을 발급받는다. 사용자 토큰만 환경변수로 주입하면 된다.
+실서버 호출은 기본적으로 건너뛴다. 활성화하면 기본적으로 DSHelper(BE) test 브랜치의 `POST /test/temp-token`을 호출해 임시 관리자 access token을 발급받는다. 사용자 토큰만 환경변수로 주입하면 된다.
 
 사용자 BE와 관리자 BE가 서로 다른 호스트로 배포된 경우 `E2E_BACKEND_API_BASE_URL`과 `E2E_ADMIN_API_BASE_URL`을 각각 지정한다. 관리자 경로가 없는 호스트를 지정하면 조회가 `404 RESOURCE_NOT_FOUND`로 실패한다.
 
