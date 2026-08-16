@@ -166,3 +166,10 @@
 
 - 상태: 진행 중
 - 변경: 코드로 확정 가능한 계약, 외부 확인 필요 항목, 네이버 callback 불일치, 사용자·관리자 실제 검증 순서와 완료 조건을 별도 문서로 분리
+
+### FE-023 — 프론트 엄격 테스트 및 OAuth callback 회귀 수정
+
+- 상태: 완료
+- 변경: OAuth 3 provider payload/redirect URI 테스트, 사용자 봉사 API path·method 테스트 추가
+- 변경: 네이버 callback을 실제 동적 라우트 `/oauth/naver/callback`과 일치하도록 수정
+- 검증: Vitest 47개, typecheck, lint

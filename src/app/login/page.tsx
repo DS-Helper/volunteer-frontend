@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ApiError } from '@/lib/errors'
 import { getOAuthLoginUrl, type OAuthProvider } from '@/features/auth'
+import { getOAuthRedirectUri } from '@/features/auth/oauth-redirect'
 
 const providers: Array<{ id: OAuthProvider; label: string }> = [
   { id: 'kakao', label: '카카오로 시작하기' },
@@ -27,9 +28,7 @@ export default function LoginPage() {
     setError(null)
     rememberReturnTo()
     try {
-      const redirectUri = provider === 'kakao' || provider === 'google'
-        ? `${window.location.origin}/${provider}/callback`
-        : undefined
+      const redirectUri = getOAuthRedirectUri(window.location.origin, provider)
       const url = await getOAuthLoginUrl(provider, redirectUri)
       const target = new URL(url)
       const state = target.searchParams.get('state')

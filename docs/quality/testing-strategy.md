@@ -1,5 +1,12 @@
 # 테스트 전략
 
+## 현재 엄격 검증 범위
+
+- OAuth provider별 login-url 경로·redirect URI·`code/state` payload를 단위 테스트한다.
+- 사용자 봉사 API는 소개·일정 목록/상세·신청 최신/수정/취소·참여 신청/취소의 path·HTTP method·캐시 경계를 단위 테스트한다.
+- 공통 API client는 query 직렬화, Envelope 해제, 오류 코드/field error, Mock fallback, request deduplication을 통합 테스트한다.
+- 실제 백엔드 인증 흐름은 `tests/e2e/backend-volunteer-api.spec.ts`에서 명시적 환경변수로 실행하며, 실데이터 mutation은 별도 flag 없이는 수행하지 않는다.
+
 > 상태: 검증 중 · 작업 ID: FE-301  
 > 요구사항: `volunteer_plan.md` §5-19, §11, §13  
 > 공식 기준: Next.js 16.2 `testing/vitest.md`, `testing/playwright.md`  

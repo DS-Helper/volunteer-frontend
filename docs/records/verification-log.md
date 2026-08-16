@@ -200,3 +200,13 @@
 | 검증 항목 | 방식 | 결과 | 비고 |
 |---|---|---|---|
 | 문서 라우터 구조 | `npm.cmd run docs:check` | 통과 | 28개 Markdown이 `docs/README.md`에서 연결됨 |
+
+### FE-023
+
+| 검증 항목 | 방식 | 결과 | 비고 |
+|---|---|---|---|
+| OAuth API 계약 | Vitest `auth-api.test.ts` | 통과 | 카카오·네이버·구글 login-url 및 code/state payload |
+| OAuth redirect URI | Vitest `oauth-redirect.test.ts` | 통과 | 네이버 `/oauth/naver/callback` 포함 |
+| 사용자 봉사 API 계약 | Vitest `volunteer-user-api.test.ts` | 통과 | 4개 흐름의 path·method·cache/FormData |
+| 전체 단위·통합 테스트 | `npm.cmd run test:run` | 통과 | 9 files / 47 tests |
+| typecheck/lint | npm scripts | 통과 | 오류 없음 |
