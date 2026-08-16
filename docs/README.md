@@ -46,6 +46,7 @@
 | --- | --- | --- |
 | [구현 계획](delivery/implementation-plan.md) | 검증 중 | 단계·의존성·완료 게이트 변경 |
 | [현재 상태](delivery/current-status.md) | 검증 중 | 작업 시작·완료·차단 발생 |
+| [OAuth·백엔드 연동 검증 계획](delivery/oauth-backend-verification-plan.md) | 진행 중 | 사용자·관리자 API 및 외부 OAuth 설정 검증 |
 
 ### 기능
 
