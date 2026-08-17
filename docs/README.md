@@ -39,6 +39,10 @@
 | [데이터·캐시·무효화](architecture/data-cache-and-invalidation.md) | 검증 중 | 캐시·Query key·재조회 변경 |
 | [보안과 개인정보](architecture/security-and-privacy.md) | 검증 중 | 인증·권한·개인정보 변경 |
 | [코드·문서 구조](architecture/code-organization.md) | 진행 중 | 소스 경계·문서 라우팅·테스트 배치 변경 |
+| [백엔드 브랜치 기준 소스 조회 설계안](architecture/backend-source-derived-design.md) | 완료 | 사용자 `test`·관리자 `test` 소스 기준 재설계 |
+| [Next.js 완전 이식 가능성 감사](architecture/nextjs-port-feasibility.md) | 완료 | endpoint·DTO 커버리지와 백엔드 이식 잔여 범위 |
+| [로컬 사용자 인증 설계안](architecture/local-user-auth-design.md) | 제안 | username/password·JWT 기반 사용자 도메인 |
+| [독립 봉사 플랫폼 아키텍처](architecture/independent-platform-architecture.md) | 확정 | 기존 사용자·관리자 백엔드 제거 및 단일 플랫폼 소유권 |
 
 ### 전달 계획
 
@@ -47,6 +51,7 @@
 | [구현 계획](delivery/implementation-plan.md) | 검증 중 | 단계·의존성·완료 게이트 변경 |
 | [현재 상태](delivery/current-status.md) | 검증 중 | 작업 시작·완료·차단 발생 |
 | [OAuth·백엔드 연동 검증 계획](delivery/oauth-backend-verification-plan.md) | 진행 중 | 사용자·관리자 API 및 외부 OAuth 설정 검증 |
+| [독립 플랫폼 구현 작업 계획](delivery/independent-platform-implementation-plan.md) | 예정 | 외부 백엔드 제거와 독립 인증·봉사 서버 구현 |
 
 ### 기능
 
@@ -88,6 +93,7 @@
 | FE-011 | Netlify Next.js 배포 대상 설정 | 검증 중 | 환경·실행 안내 | Netlify 재배포 및 운영 URL 확인 |
 | FE-012 | 실 API 기본 전환 | 진행 중 | API 계약 및 환경·실행 안내 | 백엔드 CORS·인증 설정 |
 | FE-013 | OAuth 로그인·회원가입과 JWT 저장 | 진행 중 | 인증 API 및 환경·실행 안내 | Provider redirect URI·OAuth client 등록 |
+| FE-031 | 기존 BE/Admin 비의존 독립 플랫폼 전환 | 진행 중 | 독립 플랫폼 아키텍처·구현 계획 | 실제 PostgreSQL migration·production storage·통합 테스트 |
 
 ## 작업 기록 절차
 

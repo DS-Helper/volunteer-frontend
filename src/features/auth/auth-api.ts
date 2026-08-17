@@ -7,6 +7,38 @@ export interface JwtResponse {
   refreshToken: string
 }
 
+export interface LocalAuthUser {
+  id: string
+  username: string
+  role: 'USER' | 'ADMIN'
+}
+
+export interface LocalAuthResponse {
+  user: LocalAuthUser
+  accessToken: string
+  expiresIn: number
+}
+
+async function localAuthRequest(path: string, body: unknown, init?: RequestInit): Promise<LocalAuthResponse> {
+  const response = await fetch(path, {
+    ...init,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...init?.headers },
+    body: JSON.stringify(body),
+  })
+  const payload = await response.json().catch(() => null) as { data?: LocalAuthResponse; message?: string } | null
+  if (!response.ok || !payload?.data) throw new Error(payload?.message ?? '인증 요청을 처리하지 못했습니다.')
+  return payload.data
+}
+
+export function registerWithPassword(input: { username: string; password: string; passwordConfirmation: string }): Promise<LocalAuthResponse> {
+  return localAuthRequest('/api/auth/register', input)
+}
+
+export function loginWithPassword(input: { username: string; password: string }): Promise<LocalAuthResponse> {
+  return localAuthRequest('/api/auth/login', input)
+}
+
 const providerPaths: Record<OAuthProvider, string> = {
   kakao: '/oauth/kakao',
   naver: '/oauth/naver',

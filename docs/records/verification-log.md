@@ -210,3 +210,63 @@
 | 사용자 봉사 API 계약 | Vitest `volunteer-user-api.test.ts` | 통과 | 4개 흐름의 path·method·cache/FormData |
 | 전체 단위·통합 테스트 | `npm.cmd run test:run` | 통과 | 9 files / 47 tests |
 | typecheck/lint | npm scripts | 통과 | 오류 없음 |
+# FE-026 검증
+
+- `npm run typecheck` 통과
+- `npm run build` 통과
+- `npm run test:run` 통과 (9 files, 47 tests)
+- `npm run lint` 통과
+- `npm run contract:check` 통과
+- `npm run docs:check` 통과
+
+# FE-027 검증
+
+- `npm run typecheck` 통과
+- `npm run test:run` 통과 (9 files, 47 tests)
+- `npm run lint` 통과
+- `npm run build` 통과
+
+# FE-028 검증
+
+- 사용자 `test` 봉사 controller 13개 endpoint를 source scan으로 확인
+- 관리자 `test` 봉사 controller 20개 endpoint를 source scan으로 확인
+- `npm run typecheck` 통과
+- `npm run test:run` 통과 (9 files, 47 tests)
+- `npm run lint` 통과
+- `npm run build` 통과
+- `npm run docs:check` 통과 (31 markdown files)
+- `npm run contract:check` 통과
+
+# FE-031 기반 검증
+
+- 보안 헤더 설정은 Next.js build 설정에 반영했다.
+- 외부 API URL 제거는 내부 API·DB 구현 전에는 실행하지 않도록 차단 조건을 기록했다.
+- `npx prisma validate` 통과 (검증용 `DATABASE_URL` 사용)
+- `npm audit --omit=dev` 통과 (0 vulnerabilities)
+- 인증 primitive unit test 통과 (Argon2id hash/verify, 49 tests total)
+- `npm run db:generate` 통과 (검증용 `DATABASE_URL` 사용)
+- 전체 `npm audit`에는 개발 의존성의 high 3건이 남아 있으며, production 범위 `npm audit --omit=dev`는 0건이다. `npm audit fix`는 lockfile 대규모 변경 전 검토 대상으로 남긴다.
+- 독립 인증 Route Handler가 Next.js build route 목록에 포함됨을 확인했다.
+- 전체 Vitest 50개 통과.
+- 사용자 독립 Route Handler가 Next.js typecheck를 통과했다.
+- 사용자 신청·내 활동 Route Handler가 Next.js build route 목록에 포함됨을 확인했다.
+- 관리자 일정 목록 Route Handler가 typecheck/build에 포함됨을 확인했다.
+- 관리자 신청 Route Handler가 typecheck/build에 포함됨을 확인했다.
+- 관리자 단원 목록·상세·상태 변경 Route Handler가 typecheck/build에 포함됨을 확인했다.
+- 2026-08-17 회귀: `npm run typecheck` 통과, `npm run test:run` 10 files/50 tests 통과, `npm run build` 통과.
+- 실제 PostgreSQL migration과 배포 런타임 통합 테스트는 운영 `DATABASE_URL` 및 시크릿이 없어 미실행.
+- `npm run verify:independent` ✅ Netlify·API client·관리자 upload 경로에서 기존 외부 백엔드 도메인 0건.
+- `npm audit --omit=dev` ✅ production dependency vulnerabilities 0건.
+- `npm run docs:check` ✅ 34개 Markdown 문서 링크/라우터 검사.
+- OAuth callback 비호출 전환 후 `npm run typecheck`, `npm run test:run`, `npm run build` 재통과.
+- `npm run verify:deploy-config` ✅ 독립 플랫폼 필수 환경변수와 외부 백엔드 URL 부재 확인.
+- CI workflow는 동일한 `verify:independent`, `verify:deploy-config`, DB validate/generate, lint, typecheck, Vitest, build, production audit를 실행하도록 구성했다.
+- 최신 회귀 검증: `npm run lint` 오류·경고 0건, `npm run typecheck`, `npm run test:run`(50개), `npm run build` 모두 통과.
+- 초기 migration SQL 생성 완료. `prisma migrate status`는 로컬 PostgreSQL 미기동으로 미실행 상태이며, 운영 `DATABASE_URL`에서 `npm run db:migrate:deploy`를 실행해야 한다.
+- PostgreSQL compose 구성 파일 정적 검토 완료. Docker daemon 미기동으로 실제 container/migration 통합 실행은 미실행.
+- 관리자 일정 mutation Route Handler 추가 후 `npm run typecheck`, `npm run lint`, `npm run test:run`(50개), `npm run build`, `npm run docs:check` 재통과.
+- 관리자 이미지 업로드 Route Handler는 typecheck/build route 목록에 포함되며, 실제 파일 저장은 `FILE_STORAGE_MODE=local` 또는 운영 storage adapter 설정이 필요하다.
+- 관리자 참여자·출석 Route Handler 추가 후 `npm run typecheck`, `npm run lint`, `npm run test:run`(50개), `npm run build` 재통과.
+- 관리자 일정 상태 전이 Route Handler 추가 후 동일 회귀 검증을 재통과.
+- `/api/health` Route Handler가 typecheck/build route 목록에 포함되며, 실제 200 응답은 운영 DB 연결 후 smoke test에서 확인한다.
+- 운영 URL smoke check (2026-08-17): `https://volunteer.dshelper.kr/api/health`는 `404`를 반환했다. 현재 운영 배포가 최신 독립 플랫폼 빌드를 반영하지 않은 상태이며, 재배포 후 동일 URL을 재검증해야 한다.

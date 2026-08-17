@@ -401,8 +401,10 @@ function getIntroduction(): VolunteerIntroduction {
     applicationStatus: application?.status ?? null,
     capabilities: {
       canApply,
-      canViewApplicationStatus: application !== null,
-      canViewEvents: member?.status === 'ACTIVE',
+      canEdit: application?.status === 'PENDING',
+      canCancel: application?.status === 'PENDING',
+      canReapply: canApply,
+      requiresLogin: application === null && member === null,
     },
   }
 }
@@ -1015,6 +1017,7 @@ export async function handleVolunteerMockRequest<TResult>(
     findEvent(eventId)
     return {
       participants: clone(state.maskedParticipants[eventId] ?? []),
+      participantCount: (state.maskedParticipants[eventId] ?? []).length,
     } as TResult
   }
   match = path.match(/^\/api\/v1\/volunteer-events\/(\d+)\/participations$/)

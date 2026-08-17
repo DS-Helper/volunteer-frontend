@@ -174,7 +174,7 @@ async function parseSuccessResponse<T>(
 export class ApiClient {
   readonly baseUrl: string
 
-  constructor(baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.trim() ?? '') {
+  constructor(baseUrl = '') {
     this.baseUrl = baseUrl
   }
 
@@ -229,15 +229,7 @@ export class ApiClient {
       headers.set('Authorization', `Bearer ${accessToken}`)
     }
 
-    if (!this.baseUrl) {
-      if (!mock) {
-        throw new ApiError({
-          code: 'API_BASE_URL_MISSING',
-          message:
-            'API 주소가 설정되지 않았고 사용할 수 있는 목업 응답도 없습니다.',
-        })
-      }
-
+    if (!this.baseUrl && mock) {
       return mock({
         path,
         method,
@@ -248,7 +240,19 @@ export class ApiClient {
       })
     }
 
-    const url = joinUrl(this.baseUrl, appendQuery(path, query))
+    const relativePath = appendQuery(path, query)
+    const serverBaseUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() ?? ''
+    const url = this.baseUrl
+      ? joinUrl(this.baseUrl, relativePath)
+      : typeof window === 'undefined'
+        ? joinUrl(serverBaseUrl, relativePath)
+        : relativePath
+    if (!url || (typeof window === 'undefined' && !serverBaseUrl)) {
+      throw new ApiError({
+        code: 'API_BASE_URL_MISSING',
+        message: '서버 요청에는 NEXT_PUBLIC_SITE_URL이 필요합니다.',
+      })
+    }
     const serializedBody = serializeBody(body, headers)
 
     let response: Response
@@ -276,9 +280,10 @@ export class ApiClient {
       if (response.status === 401 && typeof window !== 'undefined') {
         window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY)
         window.localStorage.removeItem('refreshToken')
+        window.localStorage.removeItem('localAuthUser')
         window.dispatchEvent(new Event('dshelper-auth-changed'))
         if (!window.location.pathname.startsWith('/login')) {
-          window.location.assign(`/login?returnTo=${encodeURIComponent(window.location.pathname)}`)
+          window.location.replace(`/login?returnTo=${encodeURIComponent(window.location.pathname)}`)
         }
       }
       throw await parseErrorResponse(response)

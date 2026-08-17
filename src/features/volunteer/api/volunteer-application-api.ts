@@ -15,9 +15,9 @@ const APPLICATIONS_PATH = '/api/v1/volunteer-applications'
 
 export function getVolunteerIntroduction(): Promise<VolunteerIntroduction> {
   return volunteerApiRequest('/api/v1/volunteer/introduction', {
-    cache: 'force-cache',
+    // 로그인 여부와 신청 capabilities가 포함된 개인화 응답이다.
+    cache: 'no-store',
     method: 'GET',
-    next: { revalidate: 300, tags: ['volunteer-introduction'] },
   })
 }
 

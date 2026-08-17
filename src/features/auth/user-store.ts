@@ -1,7 +1,6 @@
 'use client'
 
 import { useSyncExternalStore } from 'react'
-import { apiClient } from '@/lib/api'
 
 export interface CurrentUserIdentifier {
   userId: string
@@ -49,20 +48,29 @@ export function subscribeUserStore(listener: () => void): () => void {
 }
 
 export async function hydrateUserStore(): Promise<void> {
-  emit({ ...snapshot, isLoading: true, error: null })
+  if (typeof window === 'undefined') return
   try {
-    const [identifier, info] = await Promise.all([
-      apiClient.get<CurrentUserIdentifier>('/user/my-identifier', { cache: 'no-store' }),
-      apiClient.get<CurrentUserInfo>('/user/my-info', { cache: 'no-store' }),
-    ])
-    emit({ identifier, info, isLoading: false, error: null })
-  } catch (cause) {
-    emit({ ...snapshot, isLoading: false, error: cause instanceof Error ? cause.message : '사용자 정보를 불러오지 못했습니다.' })
+    const raw = window.localStorage.getItem('localAuthUser')
+    if (!raw) return emit(emptySnapshot)
+    const user = JSON.parse(raw) as { id: string; username: string; role: 'USER' | 'ADMIN' }
+    setLocalAuthUser(user)
+  } catch {
+    emit({ ...emptySnapshot, error: '사용자 정보를 불러오지 못했습니다.' })
   }
 }
 
 export function clearUserStore(): void {
   emit(emptySnapshot)
+}
+
+export function setLocalAuthUser(user: { id: string; username: string; role: 'USER' | 'ADMIN' }): void {
+  window.localStorage.setItem('localAuthUser', JSON.stringify(user))
+  emit({
+    identifier: { userId: user.id, userRole: user.role },
+    info: { name: user.username, email: null, birthyear: null, gender: null, phoneNumber: null, profileImageUrl: null },
+    isLoading: false,
+    error: null,
+  })
 }
 
 export function useUserStore(): UserStoreSnapshot {

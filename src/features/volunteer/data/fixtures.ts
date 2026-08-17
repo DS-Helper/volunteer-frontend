@@ -60,8 +60,10 @@ export const volunteerIntroductionFixture: VolunteerIntroduction = {
   applicationStatus: 'APPROVED',
   capabilities: {
     canApply: false,
-    canViewApplicationStatus: true,
-    canViewEvents: true,
+    canEdit: false,
+    canCancel: false,
+    canReapply: false,
+    requiresLogin: false,
   },
 }
 

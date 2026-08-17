@@ -2,7 +2,7 @@
 
 > 상태: 진행 중 · 작업 ID: FE-006  
 > 요구사항: `volunteer_plan.md` §4, §5-5, §6-22, §8, §9  
-> v1 API/Mock: `NEXT_PUBLIC_API_BASE_URL` 아래 `/api/v1` endpoint를 가정하고 MSW가 같은 Envelope와 오류를 반환한다.  
+> 독립 플랫폼: 동일 Next.js origin의 `/api/v1` Route Handler가 API 소유자이며, MSW는 명시적 UI 테스트에서만 사용한다.
 > 디자인 기준 DS-01: 성공은 초록, 경고·오류는 의미가 색에만 의존하지 않도록 아이콘·텍스트를 병기하며 12px/pill radius를 사용한다.
 
 ## 실제 BE 기준 공통 응답

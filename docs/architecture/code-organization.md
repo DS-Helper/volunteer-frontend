@@ -31,3 +31,18 @@ scripts                          계약·문서 구조 검증
 npm run docs:check
 npm run contract:check
 ```
+# 구조 관리 원칙
+
+독립 플랫폼 전환 작업의 코드는 다음 의존 방향을 고정한다.
+
+```text
+app route → feature API/UI → server application service → repository → database
+```
+
+- `src/app`: 라우팅과 HTTP 조합
+- `src/features`: 브라우저용 화면·client API·View Model
+- `src/server`: 인증·권한·봉사 업무 규칙·영속성·파일
+- `src/lib`: 서버와 클라이언트가 안전하게 공유하는 순수 유틸리티
+- `tests/unit`, `tests/integration`, `tests/e2e`: 계층별 검증
+
+Route Handler가 DB query를 직접 작성하거나 Client Component가 업무 규칙을 판정하지 않는다. 새 파일은 이 경계와 `docs/README.md`의 작업 문서에 연결되어야 한다.

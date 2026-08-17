@@ -8,12 +8,14 @@
 
 | 영역 | 상태 | 완료 | 다음 작업 | 차단 |
 | --- | --- | --- | --- | --- |
-| 프로젝트 scaffold | 완료 | Next 16.2 TS App Router | 설정 보존 | 없음 |
+| 프로젝트 scaffold | 완료 | Next 16.3.1 TS App Router·Prisma 7 설정 | 설정 보존 | 없음 |
 | 요구사항·문서 | 완료 | 원문·규칙·라우터·기능 문서 | 실 계약 시 갱신 | 없음 |
 | 공통 API/Mock | 검증 중 | 사용자 ResponseVo·UUID·page·204 경계 반영 | 실 API별 장애 원인 확인 | 백엔드 환경 |
 | 사용자 기능 | 검증 중 | 소개·신청·상태·일정·참여·내 활동 사용자 계약 정합화 | 실제 API 연동 | Spring API |
 | 관리자 기능 | 검증 중 | 일정 이미지 2단계 업로드·관리자 E2E 하네스 | 실제 관리자 API 응답 검증 | 관리자 BE 500/토큰 발급 API |
 | 품질 | 완료 | lint·typecheck·Vitest·build, Playwright desktop/mobile 8개 통과 | 실 Spring contract smoke | Spring API |
+| 독립 플랫폼 전환 | 진행 중 | 독립 DB schema·JWT auth·사용자/관리자 핵심 Route Handler·동일 origin 전환 | 파일 영구 storage·운영 DB 통합·운영 재배포 | FE-031 |
+| 독립 인증 | 진행 중 | register/login/refresh/logout Route Handler·Prisma schema·JWT primitive·초기 migration | 운영 DB 적용·통합 테스트 | DATABASE_URL/배포 런타임 |
 
 ## 이번 작업 체크리스트
 
@@ -33,3 +35,4 @@
 
 - 관리자 백엔드 목록 API가 정상화되면 실제 mutation E2E를 실행한다.
 - 임시 관리자 토큰 API(`/test/temp-token`)의 배포 500 원인을 백엔드에서 확인한다.
+- 독립 플랫폼 전환은 [구현 작업 계획](independent-platform-implementation-plan.md)의 FE-031 단계로 관리한다.

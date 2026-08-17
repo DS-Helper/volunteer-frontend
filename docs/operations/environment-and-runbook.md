@@ -2,21 +2,24 @@
 
 > 상태: 진행 중 · 작업 ID: FE-401, FE-011, FE-012
 > 요구사항: `volunteer_plan.md` §2-3, §5-18  
-> v1 API/Mock: 개발 기본은 MSW 사용을 가정하되, 환경 flag 이름은 구현 시 결정하고 실 API는 `NEXT_PUBLIC_API_BASE_URL`로 전환한다.  
+> 독립 플랫폼: 브라우저·서버 모두 Next.js 내부 `/api` Route Handler를 사용하며 기존 Spring API URL은 사용하지 않는다.
 > 디자인 기준 DS-01: 환경에 관계없이 `#0DBA53`, `#3C3B3B`, `#F6F6F6`, Pretendard, 12px/pill radius가 동일해야 한다.
 
 ## 환경
 
 | 환경 | Frontend | Backend 가정 |
 | --- | --- | --- |
-| local | `http://localhost:3000` | MSW 또는 별도 local Spring |
-| production | `https://dshelper.kr` | `https://server.dshelper.kr` |
+| local | `http://localhost:3000` | 동일 Next.js Route Handler + PostgreSQL |
+| production | `https://volunteer.dshelper.kr` | 동일 Next.js Route Handler + PostgreSQL |
 
 ## 환경변수
 
 ```text
-NEXT_PUBLIC_API_BASE_URL=https://be-test.dshelper.kr
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_USE_VOLUNTEER_MOCKS=false
+DATABASE_URL=postgresql://...
+AUTH_JWT_SECRET=32자 이상의 운영 비밀키
+FILE_STORAGE_MODE=s3
 ```
 
 이 값은 브라우저에 공개되고 build 시점에 고정된다. `.env*`는 프로젝트 root에 두고 커밋하지 않는다. 비밀키에 `NEXT_PUBLIC_`를 붙이지 않는다.
@@ -33,6 +36,18 @@ npm run build
 npm run start
 npm run test:e2e
 ```
+
+로컬 PostgreSQL 통합 검증은 다음 순서로 실행한다.
+
+```text
+docker compose -f docker-compose.postgres.yml up -d
+DATABASE_URL=postgresql://volunteer:volunteer@localhost:5432/volunteer npm run db:migrate:deploy
+DATABASE_URL=postgresql://volunteer:volunteer@localhost:5432/volunteer npm run dev
+```
+
+`docker-compose.postgres.yml`에는 개발용 자격 증명만 포함하며 운영 환경변수로 재사용하지 않는다.
+
+배포 후 `GET /api/health`가 `200`과 `data.status=ok`, `data.database=ok`를 반환하는지 확인한다. 데이터베이스 연결 실패는 개인정보나 연결 문자열을 노출하지 않고 `503`으로 반환한다.
 
 존재하지 않는 script는 현재 지원되지 않는 것으로 기록하며 임의로 성공 처리하지 않는다. Next.js 16은 Turbopack이 dev/build 기본이고 `next lint`는 제거되었다.
 
@@ -57,9 +72,9 @@ Next.js 16.2는 Netlify의 최신 Next.js Runtime(OpenNext 기반)이 처리한�
 
 배포 후 Netlify의 build log에서 build command와 publish directory가 위 값으로 표시되는지 확인하고, 사이트 루트(`/`)와 App Router 경로를 각각 요청한다.
 
-## 실 API 전환 점검
+## 독립 API 실행 점검
 
-FE-012부터 실 API가 기본이다. Mock은 `NEXT_PUBLIC_USE_VOLUNTEER_MOCKS=true`를 명시한 로컬 개발·테스트에서만 사용한다. 현재 Netlify 배포는 `https://be-test.dshelper.kr`을 사용하며, 운영 전환 시 `https://server.dshelper.kr`로 변경한다.
+`NEXT_PUBLIC_USE_VOLUNTEER_MOCKS=true`는 명시적인 로컬 UI 테스트에서만 사용한다. 기본 요청은 같은 Next.js 애플리케이션의 `/api/v1` Route Handler로 전달된다. `NEXT_PUBLIC_SITE_URL`은 서버 컴포넌트가 내부 API를 절대 URL로 호출할 때만 사용하며, 외부 백엔드 URL을 지정하지 않는다.
 
 ## OAuth 로그인·회원가입
 

@@ -1,6 +1,6 @@
 import { expect, test, type APIRequestContext } from '@playwright/test';
 
-const backendBaseUrl = (process.env.E2E_BACKEND_API_BASE_URL ?? 'https://be-test.dshelper.kr').replace(/\/$/, '');
+const backendBaseUrl = (process.env.E2E_BACKEND_API_BASE_URL ?? 'http://localhost:3000').replace(/\/$/, '');
 const adminBaseUrl = (process.env.E2E_ADMIN_API_BASE_URL ?? backendBaseUrl).replace(/\/$/, '');
 const userToken = process.env.E2E_USER_ACCESS_TOKEN;
 const configuredAdminToken = process.env.E2E_ADMIN_ACCESS_TOKEN;

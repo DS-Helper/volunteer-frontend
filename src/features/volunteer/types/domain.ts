@@ -50,8 +50,10 @@ export interface AdminVolunteerEventCapabilities {
 
 export interface VolunteerIntroductionCapabilities {
   canApply: boolean
-  canViewApplicationStatus: boolean
-  canViewEvents: boolean
+  canEdit: boolean
+  canCancel: boolean
+  canReapply: boolean
+  requiresLogin: boolean
 }
 
 export interface VolunteerIntroduction {
@@ -144,6 +146,7 @@ export interface MaskedVolunteerParticipant {
 
 export interface VolunteerEventParticipants {
   participants: MaskedVolunteerParticipant[]
+  participantCount: number
 }
 
 export interface VolunteerParticipation {
@@ -281,15 +284,15 @@ export interface AdminVolunteerEventImageUploadResponse {
 }
 
 export interface AdminVolunteerEvent
-  extends Omit<VolunteerEventDetail, 'capabilities'> {
+  extends Omit<VolunteerEventDetail, 'capabilities' | 'myParticipationStatus'> {
   id: string | number
-  // Admin API의 UUID 전환 기간에 Mock 숫자 ID를 함께 허용한다.
+  myParticipationStatus: VolunteerParticipationStatus | null
   imageFileId?: string
   visibility: VolunteerEventVisibility
   cancelReason: string | null
   createdBy: string | number
   updatedBy: string | number
-  capabilities: VolunteerEventCapabilities & AdminVolunteerEventCapabilities
+  capabilities: AdminVolunteerEventCapabilities & VolunteerEventCapabilities
 }
 
 export interface CloseVolunteerEventRequest {

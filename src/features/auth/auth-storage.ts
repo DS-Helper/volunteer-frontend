@@ -20,5 +20,6 @@ export function saveAuthTokens(tokens: {
 export function clearAuthTokens(): void {
   window.localStorage.removeItem(ACCESS_TOKEN_KEY)
   window.localStorage.removeItem(REFRESH_TOKEN_KEY)
+  window.localStorage.removeItem('localAuthUser')
   window.dispatchEvent(new Event('dshelper-auth-changed'))
 }

@@ -1,22 +1,31 @@
-name: Frontend quality
+name: Quality and deployment gate
 
 on:
-  pull_request:
   push:
-    branches: [main]
+    branches: [main, test]
+  pull_request:
 
 jobs:
-  quality:
+  verify:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/volunteer
+      AUTH_JWT_SECRET: ci-only-secret-that-is-at-least-32-characters
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      FILE_STORAGE_MODE: local
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run verify:independent
+      - run: npm run verify:deploy-config
+      - run: npm run db:validate
+      - run: npm run db:generate
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run test:run
-      - run: npm run contract:check
       - run: npm run build
+      - run: npm audit --omit=dev

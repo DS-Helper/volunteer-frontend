@@ -173,3 +173,46 @@
 - 변경: OAuth 3 provider payload/redirect URI 테스트, 사용자 봉사 API path·method 테스트 추가
 - 변경: 네이버 callback을 실제 동적 라우트 `/oauth/naver/callback`과 일치하도록 수정
 - 검증: Vitest 47개, typecheck, lint
+# FE-026 · 백엔드 소스 기반 관리자 이벤트 DTO 정규화
+
+- 기준: 사용자 `DSHelper(BE)` `test`, 관리자 `DS-Helper-Admin` `test`
+- 수정: 관리자 이벤트 응답에 사용자용 참여 상태/capabilities가 없다는 실제 DTO 차이를 API 경계에서 정규화
+- 비수정: 두 백엔드 소스 및 mock fixture의 원본 계약
+
+# FE-027 · 사용자 test DTO 및 개인화 캐시 정합화
+
+- 사용자 소개 capabilities를 `canApply`, `canEdit`, `canCancel`, `canReapply`, `requiresLogin`으로 백엔드 DTO와 통일
+- 참여자 응답의 `participantCount`를 프론트 타입·Mock에 반영
+- 로그인 회원별 소개 응답을 `no-store`로 변경해 capabilities 캐시 혼선을 방지
+- 사용자·관리자 백엔드 소스 자체는 수정하지 않음
+
+# FE-031 · 독립 플랫폼 전환 기반
+
+- Next.js 응답에 보안 기본 헤더를 추가했다.
+- 독립 Route Handler·DB가 준비되기 전 외부 API URL을 삭제하지 않도록 전환 순서를 문서화했다.
+- PostgreSQL/Prisma schema와 Argon2id·JWT 서버 primitive를 추가했다.
+- Next.js를 16.3.1로 보안 업데이트했다.
+- 독립 `/api/auth/register`, `/api/auth/login`, `/api/auth/refresh`, `/api/auth/logout` Route Handler를 추가했다.
+- Prisma PostgreSQL adapter, 사용자/세션 및 봉사 핵심 schema를 추가했다.
+- 로그인 화면에 local username/password 흐름을 연결하고 기존 user API 조회 의존성을 제거했다.
+- 독립 사용자 Route Handler로 소개·일정 목록/상세·참여자·참여 신청/취소 read/mutation을 추가했다.
+- 가입 신청 최신 조회·생성·수정·취소 및 내 활동 API를 추가했다.
+- private image는 저장소 모드가 명시되지 않으면 실패하도록 제한했다.
+- 관리자 권한 guard와 관리자 일정 목록 Route Handler를 추가했다.
+- 관리자 신청 목록·상세·승인·반려 Route Handler를 추가했다.
+- 관리자 단원 목록·상세·활성화·정지·탈퇴 Route Handler를 추가했다.
+- 관리자 단원 검색은 UUID 부분 검색을 사용하지 않고 신청자 이름과 정확한 사용자 ID를 기준으로 조회하도록 Prisma 계약에 맞췄다.
+- Netlify 및 API client의 기본 경로를 동일 origin 내부 Route Handler로 전환하고 외부 Spring URL 설정을 제거했다.
+- `verify:independent` 독립 런타임 참조 검증 스크립트를 추가했다.
+- 로그인 실패 횟수 누적 및 5회/15분 잠금 정책을 서버 인증 서비스에 적용했다.
+- 독립 플랫폼 인증 범위에 맞춰 로그인 화면과 OAuth callback의 기존 외부 인증 호출을 제거하고 로컬 계정 안내로 전환했다.
+- `.env.example`를 독립 플랫폼 변수로 교체하고 `verify:deploy-config` 배포 설정 검증을 추가했다.
+- GitHub Actions에 외부 의존성·배포 설정·DB schema·보안·테스트·빌드 품질 게이트를 추가했다.
+- 내부 인증 만료 이동을 Next.js router/`location.replace`로 정리해 ESLint 경고를 0건으로 만들었다.
+- Prisma schema에서 `prisma/migrations/0001_initial` 초기 migration을 생성하고 배포용 `db:migrate:deploy` 명령을 추가했다.
+- 로컬 PostgreSQL 통합 검증을 위한 `docker-compose.postgres.yml`과 실행 절차를 추가했다.
+- 관리자 일정 생성·상세·수정 Route Handler를 추가해 관리자 일정 폼의 내부 API 계약을 연결했다.
+- 관리자 일정 이미지 업로드 Route Handler를 내부 private storage와 `VolunteerFile` metadata에 연결했다.
+- 관리자 일정 참여자 조회 및 출석 저장 Route Handler를 추가하고 업무 오류 코드·처리 결과 DTO를 반환하도록 했다.
+- 관리자 일정 공개·마감·취소 상태 전이 Route Handler를 추가했다.
+- Prisma 연결 상태를 확인하는 내부 `/api/health` 운영 점검 endpoint를 추가했다.

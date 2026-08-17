@@ -23,6 +23,10 @@
 | ADR-012 | 승인 | Netlify 최신 Next.js Runtime을 명시적 Build plugin으로 등록 | 자동 어댑터 감지가 실행되지 않아 `@netlify/plugin-nextjs` 최신 버전을 devDependency와 `netlify.toml`에 등록한다. `npm run build`, `.next`도 함께 명시해 UI 설정 누락과 정적 파일 전용 배포를 방지한다. |
 | ADR-013 | 승인 | 실 API를 기본으로 사용하고 Mock은 명시적 flag에서만 활성화 | production에서 환경변수 누락으로 Mock 화면이 노출되는 것을 방지한다. `NEXT_PUBLIC_USE_VOLUNTEER_MOCKS=true`일 때만 Mock handler를 주입하고, 그 외에는 공통 API client가 실제 backend를 호출한다. |
 | ADR-014 | 승인 | OAuth access token은 브라우저 `localStorage.accessToken`에 저장하고 API Client가 Bearer 헤더를 자동 첨부 | 현재 BE 웹 OAuth가 토큰을 body·header로 반환하고 쿠키를 사용하지 않는다. client-only 인증 경계에서만 토큰을 읽으며 provider secret은 프론트에 노출하지 않는다. |
+| ADR-015 | 승인 | 관리자 봉사 API의 현재 연동 기준은 `DS-Helper-Admin` `test` 브랜치로 한다 | `main`에는 봉사 도메인 소스가 없고 `test`에는 controller·DTO·Enum·service·repository·테스트가 존재한다. 운영 승격 시 `main` 계약을 재검증한다. |
+| ADR-016 | 승인 | 기존 사용자·관리자 백엔드는 런타임에서 사용하지 않고 독립 봉사 플랫폼으로 전환한다 | 이 프로젝트가 사용자·관리자 인증, 봉사 업무 규칙, DB, 파일, API를 직접 소유한다. 기존 Spring Boot 소스는 요구사항 참고 자료로만 사용한다. |
+| ADR-017 | 임시 | 독립 서버의 기본 스택은 PostgreSQL + Prisma + `jose` + Argon2id + Node 런타임으로 시작한다 | 관계형 transaction과 JWT/비밀번호 보안 요구를 충족한다. 실제 배포 DB·호스팅 확정 시 재검토한다. |
+| ADR-018 | 승인 | Next.js를 16.3.1로 업데이트한다 | `npm audit --omit=dev`에서 확인된 Next 16.2.x의 high 보안 권고를 해소하기 위한 보안 업데이트다. |
 
 ## 결정 추가 형식
 

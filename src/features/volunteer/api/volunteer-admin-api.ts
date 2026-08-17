@@ -150,7 +150,7 @@ export function withdrawVolunteerMember(
 export function createAdminVolunteerEvent(
   request: CreateVolunteerEventRequest,
 ): Promise<AdminVolunteerEvent> {
-  return volunteerApiRequest(ADMIN_EVENTS_PATH, { body: request, method: 'POST' })
+  return volunteerApiRequest<Omit<AdminVolunteerEvent, 'myParticipationStatus'>>(ADMIN_EVENTS_PATH, { body: request, method: 'POST' }).then(normalizeAdminEvent)
 }
 
 export function uploadAdminVolunteerEventImage(
@@ -164,7 +164,7 @@ export function uploadAdminVolunteerEventImage(
   body.append('image', image)
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
-    xhr.open('POST', `${apiClient.baseUrl}${ADMIN_VOLUNTEER_PATH}/event-images`)
+    xhr.open('POST', `${apiClient.baseUrl ? `${apiClient.baseUrl}${ADMIN_VOLUNTEER_PATH}` : `${ADMIN_VOLUNTEER_PATH}`}`)
     xhr.setRequestHeader('Accept', 'application/json')
     const token = getAccessToken()
     if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`)
@@ -174,6 +174,14 @@ export function uploadAdminVolunteerEventImage(
       try {
         const payload = JSON.parse(xhr.responseText) as { data?: AdminVolunteerEventImageUploadResponse }
         if (xhr.status >= 200 && xhr.status < 300) resolve(payload.data ?? payload as unknown as AdminVolunteerEventImageUploadResponse)
+        else if (xhr.status === 401 && typeof window !== 'undefined') {
+          window.localStorage.removeItem('accessToken')
+          window.localStorage.removeItem('refreshToken')
+          window.localStorage.removeItem('localAuthUser')
+          window.dispatchEvent(new Event('dshelper-auth-changed'))
+          window.location.replace(`/login?returnTo=${encodeURIComponent(window.location.pathname)}`)
+          reject(new Error('로그인이 만료되었습니다. 다시 로그인해 주세요.'))
+        }
         else reject(new Error('이미지 업로드에 실패했습니다.'))
       } catch { reject(new Error('이미지 업로드 응답을 해석하지 못했습니다.')) }
     }
@@ -181,75 +189,91 @@ export function uploadAdminVolunteerEventImage(
   })
 }
 
+function normalizeAdminEvent(value: Omit<AdminVolunteerEvent, 'myParticipationStatus'>): AdminVolunteerEvent {
+  return {
+    ...value,
+    myParticipationStatus: null,
+    capabilities: {
+      ...value.capabilities,
+      canApply: false,
+      canCancel: false,
+      canViewParticipants: false,
+    },
+  }
+}
+
 export function getAdminVolunteerEvents(
   query: AdminVolunteerEventQuery = {},
   signal?: AbortSignal,
 ): Promise<AdminVolunteerEventPage> {
-  return volunteerApiRequest<AdminBackendPage<AdminVolunteerEvent>>(ADMIN_EVENTS_PATH, {
+  return volunteerApiRequest<AdminBackendPage<Omit<AdminVolunteerEvent, 'myParticipationStatus'>>>(ADMIN_EVENTS_PATH, {
     cache: 'no-store',
     method: 'GET',
     query,
     signal,
-  }).then(flattenAdminPage)
+  }).then((page) => ({ ...flattenAdminPage(page), content: page.content.map(normalizeAdminEvent) }))
 }
 
 export function getAdminVolunteerEvent(
   eventId: string | number,
   signal?: AbortSignal,
 ): Promise<AdminVolunteerEvent> {
-  return volunteerApiRequest(`${ADMIN_EVENTS_PATH}/${eventId}`, {
+  return volunteerApiRequest<Omit<AdminVolunteerEvent, 'myParticipationStatus'>>(`${ADMIN_EVENTS_PATH}/${eventId}`, {
     cache: 'no-store',
     method: 'GET',
     signal,
-  })
+  }).then(normalizeAdminEvent)
 }
 
 export function updateAdminVolunteerEvent(
   eventId: string | number,
   request: UpdateVolunteerEventRequest,
 ): Promise<AdminVolunteerEvent> {
-  return volunteerApiRequest(`${ADMIN_EVENTS_PATH}/${eventId}`, {
+  return volunteerApiRequest<Omit<AdminVolunteerEvent, 'myParticipationStatus'>>(`${ADMIN_EVENTS_PATH}/${eventId}`, {
     body: request,
     method: 'PATCH',
-  })
+  }).then(normalizeAdminEvent)
 }
 
 export function openAdminVolunteerEvent(
   eventId: string | number,
 ): Promise<AdminVolunteerEvent> {
-  return volunteerApiRequest(`${ADMIN_EVENTS_PATH}/${eventId}/open`, {
+  return volunteerApiRequest<Omit<AdminVolunteerEvent, 'myParticipationStatus'>>(`${ADMIN_EVENTS_PATH}/${eventId}/open`, {
     method: 'POST',
-  })
+  }).then(normalizeAdminEvent)
 }
 
 export function closeAdminVolunteerEvent(
   eventId: string | number,
   request?: CloseVolunteerEventRequest,
 ): Promise<AdminVolunteerEvent> {
-  return volunteerApiRequest(`${ADMIN_EVENTS_PATH}/${eventId}/close`, {
+  return volunteerApiRequest<Omit<AdminVolunteerEvent, 'myParticipationStatus'>>(`${ADMIN_EVENTS_PATH}/${eventId}/close`, {
     body: request,
     method: 'POST',
-  })
+  }).then(normalizeAdminEvent)
 }
 
 export function cancelAdminVolunteerEvent(
   eventId: string | number,
   request: CancelVolunteerEventRequest,
 ): Promise<AdminVolunteerEvent> {
-  return volunteerApiRequest(`${ADMIN_EVENTS_PATH}/${eventId}/cancel`, {
+  return volunteerApiRequest<Omit<AdminVolunteerEvent, 'myParticipationStatus'>>(`${ADMIN_EVENTS_PATH}/${eventId}/cancel`, {
     body: request,
     method: 'POST',
-  })
+  }).then(normalizeAdminEvent)
 }
 
 export function getAdminVolunteerEventParticipations(
   eventId: string | number,
   signal?: AbortSignal,
 ): Promise<AdminVolunteerEventParticipations> {
-  return volunteerApiRequest(
+  return volunteerApiRequest<{
+    event: Omit<AdminVolunteerEvent, 'myParticipationStatus'>
+    participations: AdminVolunteerEventParticipations['participations']
+  }>(
     `${ADMIN_EVENTS_PATH}/${eventId}/participations`,
     { cache: 'no-store', method: 'GET', signal },
-  )
+  ).then((value) => ({ ...value, event: normalizeAdminEvent(value.event) }))
 }
 
 export function saveAdminVolunteerAttendance(

@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { clearAuthTokens, clearUserStore, getAccessToken } from '@/features/auth';
 
@@ -13,6 +14,7 @@ const navigation = [
 
 export function SiteHeader() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const syncAuth = () => setIsAuthenticated(Boolean(getAccessToken()));
@@ -28,7 +30,7 @@ export function SiteHeader() {
   function handleLogout() {
     clearAuthTokens();
     clearUserStore();
-    window.location.assign('/login');
+    router.push('/login');
   }
 
   return (

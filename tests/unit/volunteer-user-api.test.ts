@@ -23,7 +23,7 @@ describe('사용자 봉사 API 경로·메서드 계약', () => {
   it('소개 조회는 캐시 정책과 함께 고정 경로를 사용한다', async () => {
     requestMock.mockResolvedValueOnce({ title: '소개' })
     await expect(getVolunteerIntroduction()).resolves.toEqual({ title: '소개' })
-    expect(requestMock).toHaveBeenCalledWith('/api/v1/volunteer/introduction', expect.objectContaining({ method: 'GET', cache: 'force-cache' }))
+    expect(requestMock).toHaveBeenCalledWith('/api/v1/volunteer/introduction', expect.objectContaining({ method: 'GET', cache: 'no-store' }))
   })
 
   it('일정 목록·상세 경로와 query를 전달한다', async () => {
