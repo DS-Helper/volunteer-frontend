@@ -44,3 +44,8 @@ ID / 날짜 / 상태 / 배경 / 결정 / 대안 / 영향 / 재검토 조건
 
 - ADR-007에서 어떤 Client 데이터 라이브러리를 채택할 것인가?
 - 기존 DSHelper auth·UI library를 의존성으로 볼 것인가?
+### ADR-019 · Netlify Next.js adapter 자동 사용
+
+- 결정: `@netlify/plugin-nextjs` 수동 고정과 `[[plugins]]` 설정을 제거한다.
+- 근거: Netlify 공식 Next.js 문서는 App Router/SSR을 zero-configuration으로 지원하고 최신 OpenNext adapter 자동 사용을 권장한다. 수동 plugin pin은 최신 adapter 업데이트를 막을 수 있다.
+- 영향: `netlify.toml`은 `npm run build`와 `.next`만 지정하며, Netlify Dashboard의 저장소·브랜치 연결을 배포 기준으로 사용한다.

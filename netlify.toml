@@ -5,6 +5,3 @@
 [build.environment]
   NEXT_PUBLIC_SITE_URL = "https://volunteer.dshelper.kr"
   NEXT_PUBLIC_USE_VOLUNTEER_MOCKS = "false"
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
