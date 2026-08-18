@@ -219,3 +219,4 @@
 - Netlify 공식 Next.js adapter 자동 사용을 위해 수동 `@netlify/plugin-nextjs` dependency와 plugin 설정을 제거했다.
 - Prisma CLI devOptional dependency가 production audit에 섞이던 CI 명령을 `--omit=optional`까지 포함하도록 교정했다.
 - Netlify install-script 제한으로 Prisma Client가 생성되지 않던 문제를 방지하기 위해 build command를 `prisma generate && next build`로 변경하고 Prisma config의 generate fallback URL을 추가했다.
+- Netlify npm allow-scripts 경고에 대응해 build 단계에서 `argon2`, Prisma CLI/engines lifecycle script를 명시적으로 rebuild하도록 보강했다.
