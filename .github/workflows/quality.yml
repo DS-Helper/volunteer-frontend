@@ -28,4 +28,5 @@ jobs:
       - run: npm run typecheck
       - run: npm run test:run
       - run: npm run build
-      - run: npm audit --omit=dev
+      # Prisma CLI is a devOptional peer of @prisma/client; exclude optional CLI dependencies from production audit.
+      - run: npm audit --omit=dev --omit=optional

@@ -272,3 +272,4 @@
 - 운영 URL smoke check (2026-08-17): `https://volunteer.dshelper.kr/api/health`는 `404`를 반환했다. 현재 운영 배포가 최신 독립 플랫폼 빌드를 반영하지 않은 상태이며, 재배포 후 동일 URL을 재검증해야 한다.
 - `main` push: commit `8aad054`를 `https://github.com/DS-Helper/volunteer-frontend.git`에 push 완료. push 후 운영 `/api/health`는 재조회했으나 여전히 `404`로, Netlify 자동 배포 연결 또는 환경변수 설정을 확인해야 한다.
 - Netlify adapter 설정 변경 후 로컬 회귀: lint/typecheck/Vitest 50개/build/독립성/배포설정/문서 검사 모두 통과. Netlify 재배포 후 운영 API 404를 다시 확인해야 한다.
+- CI audit 실패 원인 확인: Prisma CLI(`prisma`)가 `@prisma/client`의 devOptional peer로 설치되어 `--omit=dev`만으로는 audit 대상에 남는다. production dependency 검사는 `npm audit --omit=dev --omit=optional`로 변경했고 0 vulnerabilities를 확인했다. 전체 audit의 Prisma CLI high 3건은 별도 개발 의존성 이슈로 기록한다.

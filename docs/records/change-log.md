@@ -217,3 +217,4 @@
 - 관리자 일정 공개·마감·취소 상태 전이 Route Handler를 추가했다.
 - Prisma 연결 상태를 확인하는 내부 `/api/health` 운영 점검 endpoint를 추가했다.
 - Netlify 공식 Next.js adapter 자동 사용을 위해 수동 `@netlify/plugin-nextjs` dependency와 plugin 설정을 제거했다.
+- Prisma CLI devOptional dependency가 production audit에 섞이던 CI 명령을 `--omit=optional`까지 포함하도록 교정했다.
